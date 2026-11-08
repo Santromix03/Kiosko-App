@@ -1,0 +1,65 @@
+QMainWindow, QDialog { background: #FFFFFF; color: #2B2B2B; }
+QWidget { background: #FFFFFF; color: #2B2B2B; font-family: "Poppins"; font-size: 15px; }
+
+#Title { font-family: "Playfair Display"; font-size: 32px; font-weight: bold; color: #C21A1F; padding: 4px; }
+
+/* Categorías */
+#CategoryButton {
+    background: #FFFFFF; color: #C21A1F; border: 1px solid #C21A1F;
+    border-radius: 12px; font-size: 14px; font-weight: bold; padding: 8px;
+}
+#CategoryButton:checked { background: #C21A1F; color: #FFFFFF; }
+
+/* Productos */
+#ProductCard { background: #FFFFFF; border: 1px solid #E8C9CB; border-radius: 14px; }
+#ProductCard:hover { border: 1px solid #C21A1F; }
+#ProductCard[soldOut="true"] { background: #F0EDEB; border: 1px solid #DDDDDD; }
+#ProductCard[soldOut="true"] #ProductName { color: #9A9A9A; }
+#ProductImage { background: #EFE9E6; border-radius: 10px; color: #A59B97; font-size: 13px; }
+#ProductName { font-size: 15px; font-weight: bold; }
+#ProductPrice { font-size: 18px; font-weight: bold; color: #C21A1F; }
+#SoldOutLabel { font-size: 16px; font-weight: bold; color: #9A9A9A; }
+#EmptyLabel { font-size: 20px; color: #9A9A9A; padding: 40px; }
+
+/* Carrito */
+#CartPanel { background: #FFFFFF; border: 1px solid #E8C9CB; border-radius: 14px; }
+#CartTitle {
+    background: #C21A1F; color: #FFFFFF; font-size: 17px; font-weight: bold;
+    padding: 10px; border-radius: 10px;
+}
+#CartTotal { font-size: 24px; font-weight: bold; color: #C21A1F; padding: 6px 4px; }
+#CartNote { color: #B26A00; font-size: 14px; padding: 4px; }
+#QtyButton {
+    background: #FFFFFF; color: #C21A1F; border: 1px solid #C21A1F;
+    border-radius: 22px; font-size: 20px; font-weight: bold;
+}
+#QtyButton:pressed { background: #F6DADB; }
+#ConfirmButton {
+    background: #C21A1F; color: #FFFFFF; border: none;
+    border-radius: 12px; font-size: 18px; font-weight: bold;
+}
+#ConfirmButton:pressed { background: #8E1116; }
+#ConfirmButton:disabled { background: #D9C9CA; color: #FFFFFF; }
+#ClearButton {
+    background: transparent; color: #C21A1F; border: 1px solid #C21A1F;
+    border-radius: 12px; padding: 10px; font-weight: bold;
+}
+#ClearButton:disabled { color: #CDB9BA; border-color: #E5D5D6; }
+
+/* Ticket */
+#TicketTitle { font-family: "Playfair Display"; font-size: 30px; font-weight: bold; color: #C21A1F; padding: 8px; }
+#TicketNumber { font-size: 72px; font-weight: bold; color: #C21A1F; }
+#TicketPreview {
+    background: #FFFFFF; color: #2B2B2B; border: 1px dashed #C9B8B9; border-radius: 8px;
+    padding: 16px; font-family: Consolas, "DejaVu Sans Mono", monospace; font-size: 15px;
+}
+
+/* Adiciones */
+#AddonTitle { font-family: "Playfair Display"; font-size: 26px; font-weight: bold; color: #C21A1F; }
+#AddonSub { color: #6B6B6B; padding-bottom: 6px; }
+#AddonCheck { font-size: 18px; padding: 12px 8px; spacing: 14px; }
+#AddonCheck::indicator { width: 28px; height: 28px; border: 2px solid #C21A1F; border-radius: 6px; background: #FFFFFF; }
+#AddonCheck::indicator:checked { background: #C21A1F; }
+#AddonCheck:disabled { color: #9A9A9A; }
+#AddonCheck::indicator:disabled { border-color: #CCCCCC; background: #F0EDEB; }
+#AddonTotal { font-size: 22px; font-weight: bold; color: #C21A1F; padding: 6px 0; }
