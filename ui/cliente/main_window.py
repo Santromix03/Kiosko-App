@@ -14,13 +14,14 @@ from services.order_service import create_order
 from ui.cliente.cart_panel import CartPanel
 from ui.common.widgets import ProductCard, format_price
 from core.models import CartItem
-from services.printer_service import build_ticket_text, print_ticket
 from ui.cliente.ticket_dialog import TicketDialog
 from services.image_cache import download_image
 from PySide6.QtCore import Qt, QTimer
 from ui.common.widgets import CategoryButton, ProductCard, format_price
 from services.catalog_service import get_addons, get_categories, get_products
 from ui.cliente.addons_dialog import AddonsDialog
+from services.printer_service import print_ticket
+from services.ticket_renderer import render_ticket
 
 COLUMNS = 4
 
@@ -192,19 +193,19 @@ class ClientWindow(QMainWindow):
         self.cart_panel.refresh()
         self.centralWidget().setEnabled(True)
 
-        text = build_ticket_text(result.ticket_number, items, result.total)
-        self._last_ticket = (result.ticket_number, text)
-        run_async(print_ticket, self._on_printed, self._on_print_error, text)
+        image = render_ticket(result.ticket_number, items, result.total)
+        self._last_ticket = result.ticket_number
+        run_async(print_ticket, self._on_printed, self._on_print_error, image)
 
     def _on_printed(self, _):
         self._show_ticket(printed=True)
 
     def _on_print_error(self, message):
+        print("Error de impresión:", message)
         self._show_ticket(printed=False)
 
     def _show_ticket(self, printed):
-        number, text = self._last_ticket
-        TicketDialog(number, text, printed, parent=self).exec()
+        TicketDialog(self._last_ticket, printed, parent=self).exec()
 
     def _on_order_error(self, message):
         self.cart_panel.set_busy(False)

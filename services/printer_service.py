@@ -1,48 +1,76 @@
+import socket
+import time
 from datetime import datetime
+
+from PIL import Image, ImageOps
 
 import config
 
-
-def _money(value: int) -> str:
-    return "$" + f"{value:,}".replace(",", ".")
-
-
-def _line(left: str, right: str, width: int) -> str:
-    space = width - len(left) - len(right)
-    if space < 1:
-        left = left[: max(width - len(right) - 1, 1)]
-        space = 1
-    return left + " " * space + right
+CHUNK = 512          # bytes por envío; si la impresora pierde líneas, baja a 256
+CHUNK_DELAY = 0.02   # segundos entre envíos
+BAND = 256           # filas de imagen por comando
+_channel_cache = None
 
 
-def build_ticket_text(ticket_number: int, items, total: int, width: int | None = None) -> str:
-    width = width or config.TICKET_WIDTH
-    sep = "-" * width
-    lines = [
-        config.NOMBRE_LOCAL.center(width),
-        sep,
-        f"TICKET #{ticket_number}".center(width),
-        datetime.now().strftime("%d/%m/%Y %H:%M").center(width),
-        sep,
-    ]
-    for it in items:
-        lines.append(_line(f"{it.quantity}x {it.product.name}",
-                           _money(it.product.price * it.quantity), width))
-        for a in it.addons:
-            lines.append(_line(f"  + {a.name}", _money(a.price * it.quantity), width))
-    return "\n".join(lines)
+def image_to_raster(img: Image.Image) -> bytes:
+    """Convierte la imagen en comandos ESC/POS (GS v 0), por franjas."""
+    bw = ImageOps.invert(img.convert("L")).point(lambda p: 255 if p > 100 else 0, mode="1")
+    row_bytes = bw.width // 8
+
+    out = bytearray(b"\x1b@")                       # inicializar
+    for top in range(0, bw.height, BAND):
+        chunk = bw.crop((0, top, bw.width, min(top + BAND, bw.height)))
+        h = chunk.height
+        out += b"\x1d\x76\x30\x00" + bytes([row_bytes & 0xFF, row_bytes >> 8, h & 0xFF, h >> 8])
+        out += chunk.tobytes()
+    out += b"\x1b\x64\x04"                          # avanza 4 líneas para poder cortar
+    return bytes(out)
 
 
-def print_ticket(text: str) -> None:
+def _send_bluetooth(data: bytes) -> None:
+    global _channel_cache
+    if not hasattr(socket, "AF_BLUETOOTH"):
+        raise RuntimeError("Este Python no incluye soporte Bluetooth (socket.AF_BLUETOOTH)")
+    if not config.PRINTER_MAC:
+        raise RuntimeError("Falta PRINTER_MAC en el .env")
+
+    if config.PRINTER_CHANNEL:
+        channels = [config.PRINTER_CHANNEL]
+    else:
+        channels = ([_channel_cache] if _channel_cache else []) + list(range(1, 11))
+
+    last_error = None
+    for ch in channels:
+        s = socket.socket(socket.AF_BLUETOOTH, socket.SOCK_STREAM, socket.BTPROTO_RFCOMM)
+        s.settimeout(10)
+        try:
+            s.connect((config.PRINTER_MAC, ch))
+        except OSError as e:
+            last_error = e
+            s.close()
+            continue
+
+        try:
+            _channel_cache = ch
+            print(f"Impresora conectada por el canal {ch}")
+            for i in range(0, len(data), CHUNK):
+                s.sendall(data[i:i + CHUNK])
+                time.sleep(CHUNK_DELAY)
+            time.sleep(2)                           # deja que termine de imprimir antes de cerrar
+            return
+        finally:
+            s.close()
+
+    raise RuntimeError(f"No se pudo conectar a la impresora {config.PRINTER_MAC}: {last_error}")
+
+
+def print_ticket(img: Image.Image) -> None:
     mode = config.PRINTER_MODE
     if mode == "file":
         out_dir = config.BASE_DIR / "tickets"
         out_dir.mkdir(exist_ok=True)
-        name = datetime.now().strftime("ticket_%Y%m%d_%H%M%S.txt")
-        (out_dir / name).write_text(text, encoding="utf-8")
-    elif mode == "console":
-        print(text)
-    elif mode == "escpos":
-        raise NotImplementedError("La impresora térmica se configura en la Raspberry Pi")
+        img.save(out_dir / datetime.now().strftime("ticket_%Y%m%d_%H%M%S.png"))
+    elif mode == "bluetooth":
+        _send_bluetooth(image_to_raster(img))
     else:
-        raise ValueError(f"PRINTER_MODE desconocido: {mode}")
+        raise ValueError(f"PRINTER_MODE desconocido: {mode} (usa 'file' o 'bluetooth')")

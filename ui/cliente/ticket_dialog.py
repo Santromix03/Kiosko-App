@@ -3,8 +3,9 @@ from PySide6.QtWidgets import QDialog, QLabel, QPushButton, QVBoxLayout
 
 
 class TicketDialog(QDialog):
-    def __init__(self, ticket_number, ticket_text, printed=True, seconds=15, parent=None):
+    def __init__(self, ticket_number, printed=True, seconds=15, parent=None):
         super().__init__(parent)
+        self.setWindowTitle("Pedido recibido")
         self.setModal(True)
         self.setMinimumWidth(520)
         self._left = seconds
@@ -25,10 +26,6 @@ class TicketDialog(QDialog):
         msg.setWordWrap(True)
         msg.setAlignment(Qt.AlignCenter)
 
-        preview = QLabel(ticket_text)
-        preview.setObjectName("TicketPreview")
-        preview.setAlignment(Qt.AlignCenter)
-
         self.btn = QPushButton()
         self.btn.setObjectName("ConfirmButton")
         self.btn.setMinimumHeight(60)
@@ -38,7 +35,6 @@ class TicketDialog(QDialog):
         layout.addWidget(title)
         layout.addWidget(number)
         layout.addWidget(msg)
-        layout.addWidget(preview)
         layout.addWidget(self.btn)
 
         self._update_button()

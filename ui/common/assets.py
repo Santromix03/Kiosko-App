@@ -4,7 +4,7 @@ from PySide6.QtSvg import QSvgRenderer
 
 import config
 
-ASSETS = config.BASE_DIR / "assets"
+ASSETS = config.RESOURCE_DIR / "assets"      
 RED = "#C21A1F"
 
 CATEGORY_ICONS = {
