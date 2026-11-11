@@ -3,8 +3,8 @@
  True,
  False,
  True,
- 'C:\\Users\\santr\\OneDrive\\Desktop\\#4310\\visual '
- 'proyects\\Kiosko\\venv\\Lib\\site-packages\\PyInstaller\\bootloader\\images\\icon-console.ico',
+ ['C:\\Users\\santr\\OneDrive\\Desktop\\#4310\\visual '
+  'proyects\\Kiosko\\assets/icono.ico'],
  None,
  False,
  False,
@@ -93,7 +93,7 @@
  [],
  False,
  False,
- 1794268255,
+ 1794408163,
  [('run.exe',
    'C:\\Users\\santr\\OneDrive\\Desktop\\#4310\\visual '
    'proyects\\Kiosko\\venv\\Lib\\site-packages\\PyInstaller\\bootloader\\Windows-64bit-intel\\run.exe',

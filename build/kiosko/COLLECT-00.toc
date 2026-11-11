@@ -2,6 +2,30 @@
    'C:\\Users\\santr\\OneDrive\\Desktop\\#4310\\visual '
    'proyects\\Kiosko\\build\\kiosko\\Kiosko.exe',
    'EXECUTABLE'),
+  ('PIL\\_avif.cp315-win_amd64.pyd',
+   'C:\\Users\\santr\\OneDrive\\Desktop\\#4310\\visual '
+   'proyects\\Kiosko\\venv\\Lib\\site-packages\\PIL\\_avif.cp315-win_amd64.pyd',
+   'EXTENSION'),
+  ('PIL\\_imaging.cp315-win_amd64.pyd',
+   'C:\\Users\\santr\\OneDrive\\Desktop\\#4310\\visual '
+   'proyects\\Kiosko\\venv\\Lib\\site-packages\\PIL\\_imaging.cp315-win_amd64.pyd',
+   'EXTENSION'),
+  ('PIL\\_imagingcms.cp315-win_amd64.pyd',
+   'C:\\Users\\santr\\OneDrive\\Desktop\\#4310\\visual '
+   'proyects\\Kiosko\\venv\\Lib\\site-packages\\PIL\\_imagingcms.cp315-win_amd64.pyd',
+   'EXTENSION'),
+  ('PIL\\_imagingft.cp315-win_amd64.pyd',
+   'C:\\Users\\santr\\OneDrive\\Desktop\\#4310\\visual '
+   'proyects\\Kiosko\\venv\\Lib\\site-packages\\PIL\\_imagingft.cp315-win_amd64.pyd',
+   'EXTENSION'),
+  ('PIL\\_imagingtk.cp315-win_amd64.pyd',
+   'C:\\Users\\santr\\OneDrive\\Desktop\\#4310\\visual '
+   'proyects\\Kiosko\\venv\\Lib\\site-packages\\PIL\\_imagingtk.cp315-win_amd64.pyd',
+   'EXTENSION'),
+  ('PIL\\_webp.cp315-win_amd64.pyd',
+   'C:\\Users\\santr\\OneDrive\\Desktop\\#4310\\visual '
+   'proyects\\Kiosko\\venv\\Lib\\site-packages\\PIL\\_webp.cp315-win_amd64.pyd',
+   'EXTENSION'),
   ('PySide6\\MSVCP140.dll',
    'C:\\Users\\santr\\OneDrive\\Desktop\\#4310\\visual '
    'proyects\\Kiosko\\venv\\Lib\\site-packages\\PySide6\\MSVCP140.dll',
@@ -608,6 +632,9 @@
   ('_decimal.pyd',
    'C:\\Users\\santr\\AppData\\Local\\Python\\pythoncore-3.15-64\\DLLs\\_decimal.pyd',
    'EXTENSION'),
+  ('_elementtree.pyd',
+   'C:\\Users\\santr\\AppData\\Local\\Python\\pythoncore-3.15-64\\DLLs\\_elementtree.pyd',
+   'EXTENSION'),
   ('_hashlib.pyd',
    'C:\\Users\\santr\\AppData\\Local\\Python\\pythoncore-3.15-64\\DLLs\\_hashlib.pyd',
    'EXTENSION'),
@@ -641,6 +668,10 @@
   ('_zstd.pyd',
    'C:\\Users\\santr\\AppData\\Local\\Python\\pythoncore-3.15-64\\DLLs\\_zstd.pyd',
    'EXTENSION'),
+  ('assets\\icono.ico',
+   'C:\\Users\\santr\\OneDrive\\Desktop\\#4310\\visual '
+   'proyects\\Kiosko\\assets\\icono.ico',
+   'DATA'),
   ('assets\\icons\\coffee.svg',
    'C:\\Users\\santr\\OneDrive\\Desktop\\#4310\\visual '
    'proyects\\Kiosko\\assets\\icons\\coffee.svg',
@@ -660,6 +691,10 @@
   ('assets\\icons\\utensils.svg',
    'C:\\Users\\santr\\OneDrive\\Desktop\\#4310\\visual '
    'proyects\\Kiosko\\assets\\icons\\utensils.svg',
+   'DATA'),
+  ('assets\\logo.png',
+   'C:\\Users\\santr\\OneDrive\\Desktop\\#4310\\visual '
+   'proyects\\Kiosko\\assets\\logo.png',
    'DATA'),
   ('base_library.zip',
    'C:\\Users\\santr\\OneDrive\\Desktop\\#4310\\visual '

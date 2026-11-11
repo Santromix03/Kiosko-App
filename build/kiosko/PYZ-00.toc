@@ -1,6 +1,326 @@
 ('C:\\Users\\santr\\OneDrive\\Desktop\\#4310\\visual '
  'proyects\\Kiosko\\build\\kiosko\\PYZ-00.pyz',
- [('PySide6',
+ [('PIL',
+   'C:\\Users\\santr\\OneDrive\\Desktop\\#4310\\visual '
+   'proyects\\Kiosko\\venv\\Lib\\site-packages\\PIL\\__init__.py',
+   'PYMODULE'),
+  ('PIL.AvifImagePlugin',
+   'C:\\Users\\santr\\OneDrive\\Desktop\\#4310\\visual '
+   'proyects\\Kiosko\\venv\\Lib\\site-packages\\PIL\\AvifImagePlugin.py',
+   'PYMODULE'),
+  ('PIL.BlpImagePlugin',
+   'C:\\Users\\santr\\OneDrive\\Desktop\\#4310\\visual '
+   'proyects\\Kiosko\\venv\\Lib\\site-packages\\PIL\\BlpImagePlugin.py',
+   'PYMODULE'),
+  ('PIL.BmpImagePlugin',
+   'C:\\Users\\santr\\OneDrive\\Desktop\\#4310\\visual '
+   'proyects\\Kiosko\\venv\\Lib\\site-packages\\PIL\\BmpImagePlugin.py',
+   'PYMODULE'),
+  ('PIL.BufrStubImagePlugin',
+   'C:\\Users\\santr\\OneDrive\\Desktop\\#4310\\visual '
+   'proyects\\Kiosko\\venv\\Lib\\site-packages\\PIL\\BufrStubImagePlugin.py',
+   'PYMODULE'),
+  ('PIL.CurImagePlugin',
+   'C:\\Users\\santr\\OneDrive\\Desktop\\#4310\\visual '
+   'proyects\\Kiosko\\venv\\Lib\\site-packages\\PIL\\CurImagePlugin.py',
+   'PYMODULE'),
+  ('PIL.DcxImagePlugin',
+   'C:\\Users\\santr\\OneDrive\\Desktop\\#4310\\visual '
+   'proyects\\Kiosko\\venv\\Lib\\site-packages\\PIL\\DcxImagePlugin.py',
+   'PYMODULE'),
+  ('PIL.DdsImagePlugin',
+   'C:\\Users\\santr\\OneDrive\\Desktop\\#4310\\visual '
+   'proyects\\Kiosko\\venv\\Lib\\site-packages\\PIL\\DdsImagePlugin.py',
+   'PYMODULE'),
+  ('PIL.EpsImagePlugin',
+   'C:\\Users\\santr\\OneDrive\\Desktop\\#4310\\visual '
+   'proyects\\Kiosko\\venv\\Lib\\site-packages\\PIL\\EpsImagePlugin.py',
+   'PYMODULE'),
+  ('PIL.ExifTags',
+   'C:\\Users\\santr\\OneDrive\\Desktop\\#4310\\visual '
+   'proyects\\Kiosko\\venv\\Lib\\site-packages\\PIL\\ExifTags.py',
+   'PYMODULE'),
+  ('PIL.FitsImagePlugin',
+   'C:\\Users\\santr\\OneDrive\\Desktop\\#4310\\visual '
+   'proyects\\Kiosko\\venv\\Lib\\site-packages\\PIL\\FitsImagePlugin.py',
+   'PYMODULE'),
+  ('PIL.FliImagePlugin',
+   'C:\\Users\\santr\\OneDrive\\Desktop\\#4310\\visual '
+   'proyects\\Kiosko\\venv\\Lib\\site-packages\\PIL\\FliImagePlugin.py',
+   'PYMODULE'),
+  ('PIL.FpxImagePlugin',
+   'C:\\Users\\santr\\OneDrive\\Desktop\\#4310\\visual '
+   'proyects\\Kiosko\\venv\\Lib\\site-packages\\PIL\\FpxImagePlugin.py',
+   'PYMODULE'),
+  ('PIL.FtexImagePlugin',
+   'C:\\Users\\santr\\OneDrive\\Desktop\\#4310\\visual '
+   'proyects\\Kiosko\\venv\\Lib\\site-packages\\PIL\\FtexImagePlugin.py',
+   'PYMODULE'),
+  ('PIL.GbrImagePlugin',
+   'C:\\Users\\santr\\OneDrive\\Desktop\\#4310\\visual '
+   'proyects\\Kiosko\\venv\\Lib\\site-packages\\PIL\\GbrImagePlugin.py',
+   'PYMODULE'),
+  ('PIL.GifImagePlugin',
+   'C:\\Users\\santr\\OneDrive\\Desktop\\#4310\\visual '
+   'proyects\\Kiosko\\venv\\Lib\\site-packages\\PIL\\GifImagePlugin.py',
+   'PYMODULE'),
+  ('PIL.GimpGradientFile',
+   'C:\\Users\\santr\\OneDrive\\Desktop\\#4310\\visual '
+   'proyects\\Kiosko\\venv\\Lib\\site-packages\\PIL\\GimpGradientFile.py',
+   'PYMODULE'),
+  ('PIL.GimpPaletteFile',
+   'C:\\Users\\santr\\OneDrive\\Desktop\\#4310\\visual '
+   'proyects\\Kiosko\\venv\\Lib\\site-packages\\PIL\\GimpPaletteFile.py',
+   'PYMODULE'),
+  ('PIL.GribStubImagePlugin',
+   'C:\\Users\\santr\\OneDrive\\Desktop\\#4310\\visual '
+   'proyects\\Kiosko\\venv\\Lib\\site-packages\\PIL\\GribStubImagePlugin.py',
+   'PYMODULE'),
+  ('PIL.Hdf5StubImagePlugin',
+   'C:\\Users\\santr\\OneDrive\\Desktop\\#4310\\visual '
+   'proyects\\Kiosko\\venv\\Lib\\site-packages\\PIL\\Hdf5StubImagePlugin.py',
+   'PYMODULE'),
+  ('PIL.IcnsImagePlugin',
+   'C:\\Users\\santr\\OneDrive\\Desktop\\#4310\\visual '
+   'proyects\\Kiosko\\venv\\Lib\\site-packages\\PIL\\IcnsImagePlugin.py',
+   'PYMODULE'),
+  ('PIL.IcoImagePlugin',
+   'C:\\Users\\santr\\OneDrive\\Desktop\\#4310\\visual '
+   'proyects\\Kiosko\\venv\\Lib\\site-packages\\PIL\\IcoImagePlugin.py',
+   'PYMODULE'),
+  ('PIL.ImImagePlugin',
+   'C:\\Users\\santr\\OneDrive\\Desktop\\#4310\\visual '
+   'proyects\\Kiosko\\venv\\Lib\\site-packages\\PIL\\ImImagePlugin.py',
+   'PYMODULE'),
+  ('PIL.Image',
+   'C:\\Users\\santr\\OneDrive\\Desktop\\#4310\\visual '
+   'proyects\\Kiosko\\venv\\Lib\\site-packages\\PIL\\Image.py',
+   'PYMODULE'),
+  ('PIL.ImageChops',
+   'C:\\Users\\santr\\OneDrive\\Desktop\\#4310\\visual '
+   'proyects\\Kiosko\\venv\\Lib\\site-packages\\PIL\\ImageChops.py',
+   'PYMODULE'),
+  ('PIL.ImageCms',
+   'C:\\Users\\santr\\OneDrive\\Desktop\\#4310\\visual '
+   'proyects\\Kiosko\\venv\\Lib\\site-packages\\PIL\\ImageCms.py',
+   'PYMODULE'),
+  ('PIL.ImageColor',
+   'C:\\Users\\santr\\OneDrive\\Desktop\\#4310\\visual '
+   'proyects\\Kiosko\\venv\\Lib\\site-packages\\PIL\\ImageColor.py',
+   'PYMODULE'),
+  ('PIL.ImageDraw',
+   'C:\\Users\\santr\\OneDrive\\Desktop\\#4310\\visual '
+   'proyects\\Kiosko\\venv\\Lib\\site-packages\\PIL\\ImageDraw.py',
+   'PYMODULE'),
+  ('PIL.ImageDraw2',
+   'C:\\Users\\santr\\OneDrive\\Desktop\\#4310\\visual '
+   'proyects\\Kiosko\\venv\\Lib\\site-packages\\PIL\\ImageDraw2.py',
+   'PYMODULE'),
+  ('PIL.ImageFile',
+   'C:\\Users\\santr\\OneDrive\\Desktop\\#4310\\visual '
+   'proyects\\Kiosko\\venv\\Lib\\site-packages\\PIL\\ImageFile.py',
+   'PYMODULE'),
+  ('PIL.ImageFilter',
+   'C:\\Users\\santr\\OneDrive\\Desktop\\#4310\\visual '
+   'proyects\\Kiosko\\venv\\Lib\\site-packages\\PIL\\ImageFilter.py',
+   'PYMODULE'),
+  ('PIL.ImageFont',
+   'C:\\Users\\santr\\OneDrive\\Desktop\\#4310\\visual '
+   'proyects\\Kiosko\\venv\\Lib\\site-packages\\PIL\\ImageFont.py',
+   'PYMODULE'),
+  ('PIL.ImageMode',
+   'C:\\Users\\santr\\OneDrive\\Desktop\\#4310\\visual '
+   'proyects\\Kiosko\\venv\\Lib\\site-packages\\PIL\\ImageMode.py',
+   'PYMODULE'),
+  ('PIL.ImageOps',
+   'C:\\Users\\santr\\OneDrive\\Desktop\\#4310\\visual '
+   'proyects\\Kiosko\\venv\\Lib\\site-packages\\PIL\\ImageOps.py',
+   'PYMODULE'),
+  ('PIL.ImagePalette',
+   'C:\\Users\\santr\\OneDrive\\Desktop\\#4310\\visual '
+   'proyects\\Kiosko\\venv\\Lib\\site-packages\\PIL\\ImagePalette.py',
+   'PYMODULE'),
+  ('PIL.ImagePath',
+   'C:\\Users\\santr\\OneDrive\\Desktop\\#4310\\visual '
+   'proyects\\Kiosko\\venv\\Lib\\site-packages\\PIL\\ImagePath.py',
+   'PYMODULE'),
+  ('PIL.ImageQt',
+   'C:\\Users\\santr\\OneDrive\\Desktop\\#4310\\visual '
+   'proyects\\Kiosko\\venv\\Lib\\site-packages\\PIL\\ImageQt.py',
+   'PYMODULE'),
+  ('PIL.ImageSequence',
+   'C:\\Users\\santr\\OneDrive\\Desktop\\#4310\\visual '
+   'proyects\\Kiosko\\venv\\Lib\\site-packages\\PIL\\ImageSequence.py',
+   'PYMODULE'),
+  ('PIL.ImageShow',
+   'C:\\Users\\santr\\OneDrive\\Desktop\\#4310\\visual '
+   'proyects\\Kiosko\\venv\\Lib\\site-packages\\PIL\\ImageShow.py',
+   'PYMODULE'),
+  ('PIL.ImageText',
+   'C:\\Users\\santr\\OneDrive\\Desktop\\#4310\\visual '
+   'proyects\\Kiosko\\venv\\Lib\\site-packages\\PIL\\ImageText.py',
+   'PYMODULE'),
+  ('PIL.ImageTk',
+   'C:\\Users\\santr\\OneDrive\\Desktop\\#4310\\visual '
+   'proyects\\Kiosko\\venv\\Lib\\site-packages\\PIL\\ImageTk.py',
+   'PYMODULE'),
+  ('PIL.ImageWin',
+   'C:\\Users\\santr\\OneDrive\\Desktop\\#4310\\visual '
+   'proyects\\Kiosko\\venv\\Lib\\site-packages\\PIL\\ImageWin.py',
+   'PYMODULE'),
+  ('PIL.ImtImagePlugin',
+   'C:\\Users\\santr\\OneDrive\\Desktop\\#4310\\visual '
+   'proyects\\Kiosko\\venv\\Lib\\site-packages\\PIL\\ImtImagePlugin.py',
+   'PYMODULE'),
+  ('PIL.IptcImagePlugin',
+   'C:\\Users\\santr\\OneDrive\\Desktop\\#4310\\visual '
+   'proyects\\Kiosko\\venv\\Lib\\site-packages\\PIL\\IptcImagePlugin.py',
+   'PYMODULE'),
+  ('PIL.Jpeg2KImagePlugin',
+   'C:\\Users\\santr\\OneDrive\\Desktop\\#4310\\visual '
+   'proyects\\Kiosko\\venv\\Lib\\site-packages\\PIL\\Jpeg2KImagePlugin.py',
+   'PYMODULE'),
+  ('PIL.JpegImagePlugin',
+   'C:\\Users\\santr\\OneDrive\\Desktop\\#4310\\visual '
+   'proyects\\Kiosko\\venv\\Lib\\site-packages\\PIL\\JpegImagePlugin.py',
+   'PYMODULE'),
+  ('PIL.JpegPresets',
+   'C:\\Users\\santr\\OneDrive\\Desktop\\#4310\\visual '
+   'proyects\\Kiosko\\venv\\Lib\\site-packages\\PIL\\JpegPresets.py',
+   'PYMODULE'),
+  ('PIL.McIdasImagePlugin',
+   'C:\\Users\\santr\\OneDrive\\Desktop\\#4310\\visual '
+   'proyects\\Kiosko\\venv\\Lib\\site-packages\\PIL\\McIdasImagePlugin.py',
+   'PYMODULE'),
+  ('PIL.MicImagePlugin',
+   'C:\\Users\\santr\\OneDrive\\Desktop\\#4310\\visual '
+   'proyects\\Kiosko\\venv\\Lib\\site-packages\\PIL\\MicImagePlugin.py',
+   'PYMODULE'),
+  ('PIL.MpegImagePlugin',
+   'C:\\Users\\santr\\OneDrive\\Desktop\\#4310\\visual '
+   'proyects\\Kiosko\\venv\\Lib\\site-packages\\PIL\\MpegImagePlugin.py',
+   'PYMODULE'),
+  ('PIL.MpoImagePlugin',
+   'C:\\Users\\santr\\OneDrive\\Desktop\\#4310\\visual '
+   'proyects\\Kiosko\\venv\\Lib\\site-packages\\PIL\\MpoImagePlugin.py',
+   'PYMODULE'),
+  ('PIL.MspImagePlugin',
+   'C:\\Users\\santr\\OneDrive\\Desktop\\#4310\\visual '
+   'proyects\\Kiosko\\venv\\Lib\\site-packages\\PIL\\MspImagePlugin.py',
+   'PYMODULE'),
+  ('PIL.PaletteFile',
+   'C:\\Users\\santr\\OneDrive\\Desktop\\#4310\\visual '
+   'proyects\\Kiosko\\venv\\Lib\\site-packages\\PIL\\PaletteFile.py',
+   'PYMODULE'),
+  ('PIL.PalmImagePlugin',
+   'C:\\Users\\santr\\OneDrive\\Desktop\\#4310\\visual '
+   'proyects\\Kiosko\\venv\\Lib\\site-packages\\PIL\\PalmImagePlugin.py',
+   'PYMODULE'),
+  ('PIL.PcdImagePlugin',
+   'C:\\Users\\santr\\OneDrive\\Desktop\\#4310\\visual '
+   'proyects\\Kiosko\\venv\\Lib\\site-packages\\PIL\\PcdImagePlugin.py',
+   'PYMODULE'),
+  ('PIL.PcxImagePlugin',
+   'C:\\Users\\santr\\OneDrive\\Desktop\\#4310\\visual '
+   'proyects\\Kiosko\\venv\\Lib\\site-packages\\PIL\\PcxImagePlugin.py',
+   'PYMODULE'),
+  ('PIL.PdfImagePlugin',
+   'C:\\Users\\santr\\OneDrive\\Desktop\\#4310\\visual '
+   'proyects\\Kiosko\\venv\\Lib\\site-packages\\PIL\\PdfImagePlugin.py',
+   'PYMODULE'),
+  ('PIL.PdfParser',
+   'C:\\Users\\santr\\OneDrive\\Desktop\\#4310\\visual '
+   'proyects\\Kiosko\\venv\\Lib\\site-packages\\PIL\\PdfParser.py',
+   'PYMODULE'),
+  ('PIL.PixarImagePlugin',
+   'C:\\Users\\santr\\OneDrive\\Desktop\\#4310\\visual '
+   'proyects\\Kiosko\\venv\\Lib\\site-packages\\PIL\\PixarImagePlugin.py',
+   'PYMODULE'),
+  ('PIL.PngImagePlugin',
+   'C:\\Users\\santr\\OneDrive\\Desktop\\#4310\\visual '
+   'proyects\\Kiosko\\venv\\Lib\\site-packages\\PIL\\PngImagePlugin.py',
+   'PYMODULE'),
+  ('PIL.PpmImagePlugin',
+   'C:\\Users\\santr\\OneDrive\\Desktop\\#4310\\visual '
+   'proyects\\Kiosko\\venv\\Lib\\site-packages\\PIL\\PpmImagePlugin.py',
+   'PYMODULE'),
+  ('PIL.PsdImagePlugin',
+   'C:\\Users\\santr\\OneDrive\\Desktop\\#4310\\visual '
+   'proyects\\Kiosko\\venv\\Lib\\site-packages\\PIL\\PsdImagePlugin.py',
+   'PYMODULE'),
+  ('PIL.QoiImagePlugin',
+   'C:\\Users\\santr\\OneDrive\\Desktop\\#4310\\visual '
+   'proyects\\Kiosko\\venv\\Lib\\site-packages\\PIL\\QoiImagePlugin.py',
+   'PYMODULE'),
+  ('PIL.SgiImagePlugin',
+   'C:\\Users\\santr\\OneDrive\\Desktop\\#4310\\visual '
+   'proyects\\Kiosko\\venv\\Lib\\site-packages\\PIL\\SgiImagePlugin.py',
+   'PYMODULE'),
+  ('PIL.SpiderImagePlugin',
+   'C:\\Users\\santr\\OneDrive\\Desktop\\#4310\\visual '
+   'proyects\\Kiosko\\venv\\Lib\\site-packages\\PIL\\SpiderImagePlugin.py',
+   'PYMODULE'),
+  ('PIL.SunImagePlugin',
+   'C:\\Users\\santr\\OneDrive\\Desktop\\#4310\\visual '
+   'proyects\\Kiosko\\venv\\Lib\\site-packages\\PIL\\SunImagePlugin.py',
+   'PYMODULE'),
+  ('PIL.TgaImagePlugin',
+   'C:\\Users\\santr\\OneDrive\\Desktop\\#4310\\visual '
+   'proyects\\Kiosko\\venv\\Lib\\site-packages\\PIL\\TgaImagePlugin.py',
+   'PYMODULE'),
+  ('PIL.TiffImagePlugin',
+   'C:\\Users\\santr\\OneDrive\\Desktop\\#4310\\visual '
+   'proyects\\Kiosko\\venv\\Lib\\site-packages\\PIL\\TiffImagePlugin.py',
+   'PYMODULE'),
+  ('PIL.TiffTags',
+   'C:\\Users\\santr\\OneDrive\\Desktop\\#4310\\visual '
+   'proyects\\Kiosko\\venv\\Lib\\site-packages\\PIL\\TiffTags.py',
+   'PYMODULE'),
+  ('PIL.WebPImagePlugin',
+   'C:\\Users\\santr\\OneDrive\\Desktop\\#4310\\visual '
+   'proyects\\Kiosko\\venv\\Lib\\site-packages\\PIL\\WebPImagePlugin.py',
+   'PYMODULE'),
+  ('PIL.WmfImagePlugin',
+   'C:\\Users\\santr\\OneDrive\\Desktop\\#4310\\visual '
+   'proyects\\Kiosko\\venv\\Lib\\site-packages\\PIL\\WmfImagePlugin.py',
+   'PYMODULE'),
+  ('PIL.XVThumbImagePlugin',
+   'C:\\Users\\santr\\OneDrive\\Desktop\\#4310\\visual '
+   'proyects\\Kiosko\\venv\\Lib\\site-packages\\PIL\\XVThumbImagePlugin.py',
+   'PYMODULE'),
+  ('PIL.XbmImagePlugin',
+   'C:\\Users\\santr\\OneDrive\\Desktop\\#4310\\visual '
+   'proyects\\Kiosko\\venv\\Lib\\site-packages\\PIL\\XbmImagePlugin.py',
+   'PYMODULE'),
+  ('PIL.XpmImagePlugin',
+   'C:\\Users\\santr\\OneDrive\\Desktop\\#4310\\visual '
+   'proyects\\Kiosko\\venv\\Lib\\site-packages\\PIL\\XpmImagePlugin.py',
+   'PYMODULE'),
+  ('PIL._binary',
+   'C:\\Users\\santr\\OneDrive\\Desktop\\#4310\\visual '
+   'proyects\\Kiosko\\venv\\Lib\\site-packages\\PIL\\_binary.py',
+   'PYMODULE'),
+  ('PIL._deprecate',
+   'C:\\Users\\santr\\OneDrive\\Desktop\\#4310\\visual '
+   'proyects\\Kiosko\\venv\\Lib\\site-packages\\PIL\\_deprecate.py',
+   'PYMODULE'),
+  ('PIL._typing',
+   'C:\\Users\\santr\\OneDrive\\Desktop\\#4310\\visual '
+   'proyects\\Kiosko\\venv\\Lib\\site-packages\\PIL\\_typing.py',
+   'PYMODULE'),
+  ('PIL._util',
+   'C:\\Users\\santr\\OneDrive\\Desktop\\#4310\\visual '
+   'proyects\\Kiosko\\venv\\Lib\\site-packages\\PIL\\_util.py',
+   'PYMODULE'),
+  ('PIL._version',
+   'C:\\Users\\santr\\OneDrive\\Desktop\\#4310\\visual '
+   'proyects\\Kiosko\\venv\\Lib\\site-packages\\PIL\\_version.py',
+   'PYMODULE'),
+  ('PIL.features',
+   'C:\\Users\\santr\\OneDrive\\Desktop\\#4310\\visual '
+   'proyects\\Kiosko\\venv\\Lib\\site-packages\\PIL\\features.py',
+   'PYMODULE'),
+  ('PySide6',
    'C:\\Users\\santr\\OneDrive\\Desktop\\#4310\\visual '
    'proyects\\Kiosko\\venv\\Lib\\site-packages\\PySide6\\__init__.py',
    'PYMODULE'),
@@ -2242,6 +2562,10 @@
    'C:\\Users\\santr\\OneDrive\\Desktop\\#4310\\visual '
    'proyects\\Kiosko\\services\\printer_service.py',
    'PYMODULE'),
+  ('services.ticket_renderer',
+   'C:\\Users\\santr\\OneDrive\\Desktop\\#4310\\visual '
+   'proyects\\Kiosko\\services\\ticket_renderer.py',
+   'PYMODULE'),
   ('setuptools',
    'C:\\Users\\santr\\OneDrive\\Desktop\\#4310\\visual '
    'proyects\\Kiosko\\venv\\Lib\\site-packages\\setuptools\\__init__.py',
@@ -3348,6 +3672,21 @@
    'PYMODULE'),
   ('xml',
    'C:\\Users\\santr\\AppData\\Local\\Python\\pythoncore-3.15-64\\Lib\\xml\\__init__.py',
+   'PYMODULE'),
+  ('xml.etree',
+   'C:\\Users\\santr\\AppData\\Local\\Python\\pythoncore-3.15-64\\Lib\\xml\\etree\\__init__.py',
+   'PYMODULE'),
+  ('xml.etree.ElementInclude',
+   'C:\\Users\\santr\\AppData\\Local\\Python\\pythoncore-3.15-64\\Lib\\xml\\etree\\ElementInclude.py',
+   'PYMODULE'),
+  ('xml.etree.ElementPath',
+   'C:\\Users\\santr\\AppData\\Local\\Python\\pythoncore-3.15-64\\Lib\\xml\\etree\\ElementPath.py',
+   'PYMODULE'),
+  ('xml.etree.ElementTree',
+   'C:\\Users\\santr\\AppData\\Local\\Python\\pythoncore-3.15-64\\Lib\\xml\\etree\\ElementTree.py',
+   'PYMODULE'),
+  ('xml.etree.cElementTree',
+   'C:\\Users\\santr\\AppData\\Local\\Python\\pythoncore-3.15-64\\Lib\\xml\\etree\\cElementTree.py',
    'PYMODULE'),
   ('xml.parsers',
    'C:\\Users\\santr\\AppData\\Local\\Python\\pythoncore-3.15-64\\Lib\\xml\\parsers\\__init__.py',
