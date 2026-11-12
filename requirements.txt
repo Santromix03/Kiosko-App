@@ -1,5 +1,5 @@
 PySide6
 supabase
 python-dotenv
-pip install Pillow
+Pillow
 # python-escpos  
