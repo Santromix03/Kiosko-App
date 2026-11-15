@@ -24,8 +24,8 @@ def main() -> int:
         return 1
 
     window = ClientWindow()
-    window.resize(1280, 760)
-    window.show()
+    window.resize(800, 480)          # pantalla táctil oficial de 7" de Raspberry Pi
+    window.showMaximized()
     return app.exec()
 
 

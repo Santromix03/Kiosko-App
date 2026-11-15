@@ -17,7 +17,7 @@ class CartPanel(QFrame):
         super().__init__()
         self.cart = cart
         self.setObjectName("CartPanel")
-        self.setFixedWidth(340)                    
+        self.setFixedWidth(240)
         title = QLabel("TU SELECCIÓN")               
         self.clear_btn = QPushButton("Vaciar pedido")
 
@@ -46,7 +46,7 @@ class CartPanel(QFrame):
 
         self.confirm_btn = QPushButton("Confirmar pedido")
         self.confirm_btn.setObjectName("ConfirmButton")
-        self.confirm_btn.setMinimumHeight(64)
+        self.confirm_btn.setMinimumHeight(52)
         self.confirm_btn.clicked.connect(self.confirm_requested.emit)
 
         self.clear_btn = QPushButton("Vaciar")
@@ -73,20 +73,21 @@ class CartPanel(QFrame):
             text += "\n+ " + ", ".join(a.name for a in item.addons)
         text += f"\n{format_price(item.subtotal)}"
         name = QLabel(text)
+        name.setObjectName("CartRow")
         name.setWordWrap(True)
 
         minus = QPushButton("−")
         minus.setObjectName("QtyButton")
-        minus.setFixedSize(44, 44)
+        minus.setFixedSize(36, 36)
         minus.clicked.connect(lambda: self._minus(item.key))
 
         qty = QLabel(str(item.quantity))
         qty.setAlignment(Qt.AlignCenter)
-        qty.setMinimumWidth(28)
+        qty.setMinimumWidth(24)
 
         plus = QPushButton("+")
         plus.setObjectName("QtyButton")
-        plus.setFixedSize(44, 44)
+        plus.setFixedSize(36, 36)
         plus.clicked.connect(lambda: self._plus(item))
 
         h.addWidget(name, 1)

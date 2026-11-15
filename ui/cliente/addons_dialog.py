@@ -11,7 +11,7 @@ class AddonsDialog(QDialog):
         super().__init__(parent)
         self.setWindowTitle("Adiciones")
         self.setModal(True)
-        self.setMinimumWidth(480)
+        self.setMinimumSize(740, 380)
         self.product = product
         self._rows = []
 
@@ -45,11 +45,11 @@ class AddonsDialog(QDialog):
         buttons = QHBoxLayout()
         cancel = QPushButton("Cancelar")
         cancel.setObjectName("ClearButton")
-        cancel.setMinimumHeight(56)
+        cancel.setMinimumHeight(48)
         cancel.clicked.connect(self.reject)
         ok = QPushButton("Agregar al pedido")
         ok.setObjectName("ConfirmButton")
-        ok.setMinimumHeight(56)
+        ok.setMinimumHeight(48)
         ok.clicked.connect(self.accept)
         buttons.addWidget(cancel)
         buttons.addWidget(ok, 1)

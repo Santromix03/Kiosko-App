@@ -7,7 +7,7 @@ class TicketDialog(QDialog):
         super().__init__(parent)
         self.setWindowTitle("Pedido recibido")
         self.setModal(True)
-        self.setMinimumWidth(520)
+        self.setMinimumSize(560, 340)
         self._left = seconds
 
         title = QLabel("¡Pedido recibido!")
@@ -28,7 +28,7 @@ class TicketDialog(QDialog):
 
         self.btn = QPushButton()
         self.btn.setObjectName("ConfirmButton")
-        self.btn.setMinimumHeight(60)
+        self.btn.setMinimumHeight(52)
         self.btn.clicked.connect(self.accept)
 
         layout = QVBoxLayout(self)

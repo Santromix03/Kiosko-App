@@ -1,8 +1,8 @@
 
-from PySide6.QtCore import Qt
+from PySide6.QtCore import Qt, QTimer, QEvent
 from PySide6.QtWidgets import (
     QButtonGroup, QGridLayout, QHBoxLayout, QLabel, QMainWindow,
-    QPushButton, QScrollArea, QVBoxLayout, QWidget,
+    QPushButton, QScrollArea, QToolButton, QVBoxLayout, QWidget,
 )
 
 import config
@@ -23,7 +23,7 @@ from ui.cliente.addons_dialog import AddonsDialog
 from services.printer_service import print_ticket
 from services.ticket_renderer import render_ticket
 
-COLUMNS = 4
+COLUMNS = 3
 
 
 def _fetch_stock():
@@ -36,6 +36,46 @@ def _fetch_stock():
 def _fetch_menu():
     products, addons = _fetch_stock()
     return get_categories(), products, addons
+
+
+class CategoryScroll(QScrollArea):
+    """Fila de categorías deslizable: arrastras con el dedo y el scroll sigue."""
+
+    DRAG_THRESHOLD = 14   # px antes de considerar que es un arrastre, no un toque
+
+    def __init__(self):
+        super().__init__()
+        self._press = None
+        self._dragging = False
+
+    def watch(self, btn):
+        btn.installEventFilter(self)
+
+    def eventFilter(self, obj, event):
+        # QScrollArea usa este mismo filtro para sus scrollbars internos;
+        # solo procesamos eventos de los botones de categoría.
+        if not isinstance(obj, QToolButton):
+            return super().eventFilter(obj, event)
+        if event.type() == QEvent.MouseButtonPress:
+            self._press = event.position()
+            self._dragging = False
+        elif event.type() == QEvent.MouseMove and self._press is not None:
+            dx = event.position().x() - self._press.x()
+            if self._dragging or abs(dx) > self.DRAG_THRESHOLD:
+                if not self._dragging:
+                    self._dragging = True
+                    obj.setDown(False)
+                    self._press = event.position()
+                bar = self.horizontalScrollBar()
+                bar.setValue(bar.value() - int(dx))
+                self._press = event.position()
+            return True if self._dragging else False
+        elif event.type() == QEvent.MouseButtonRelease:
+            dragging, self._dragging, self._press = self._dragging, False, None
+            if dragging:
+                obj.setDown(False)
+                return True          # cancela el click si fue un arrastre
+        return super().eventFilter(obj, event)
 
 
 class ClientWindow(QMainWindow):
@@ -59,28 +99,36 @@ class ClientWindow(QMainWindow):
         central = QWidget()
         self.setCentralWidget(central)
         root = QVBoxLayout(central)
-        root.setContentsMargins(24, 16, 24, 20)
-        root.setSpacing(12)
+        root.setContentsMargins(10, 8, 10, 10)
+        root.setSpacing(8)
 
         title = QLabel(f"{config.NOMBRE_LOCAL.upper()} · TOMA TU PEDIDO")
         title.setObjectName("Title")
         title.setAlignment(Qt.AlignCenter)
         root.addWidget(title)
 
-        body = QHBoxLayout()
-        body.setSpacing(20)
-        root.addLayout(body, 1)
-
-        # Categorías (columna izquierda)
-        self.category_bar = QVBoxLayout()
-        self.category_bar.setContentsMargins(0, 0, 0, 0)
-        self.category_bar.setSpacing(12)
+        # Categorías (fila horizontal con scroll)
+        category_host = QWidget()
+        self.category_bar = QHBoxLayout(category_host)
+        self.category_bar.setContentsMargins(0, 2, 0, 2)
+        self.category_bar.setSpacing(8)
         self.category_group = QButtonGroup(self)
         self.category_group.setExclusive(True)
-        category_host = QWidget()
-        category_host.setFixedWidth(190)
-        category_host.setLayout(self.category_bar)
-        body.addWidget(category_host)
+
+        self.cat_scroll = CategoryScroll()
+        self.cat_scroll.setObjectName("CategoryScroll")
+        self.cat_scroll.setWidgetResizable(True)
+        self.cat_scroll.setFrameShape(QScrollArea.NoFrame)
+        self.cat_scroll.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
+        self.cat_scroll.setHorizontalScrollBarPolicy(Qt.ScrollBarAsNeeded)
+        self.cat_scroll.setFixedHeight(64)
+        self.cat_scroll.setWidget(category_host)
+        root.addWidget(self.cat_scroll)
+        self._cat_buttons = {}
+
+        body = QHBoxLayout()
+        body.setSpacing(10)
+        root.addLayout(body, 1)
 
         # Productos (centro)
         center = QVBoxLayout()
@@ -93,10 +141,11 @@ class ClientWindow(QMainWindow):
         scroll = QScrollArea()
         scroll.setWidgetResizable(True)
         scroll.setFrameShape(QScrollArea.NoFrame)
+        scroll.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
         self.grid_host = QWidget()
         self.grid = QGridLayout(self.grid_host)
         self.grid.setAlignment(Qt.AlignTop | Qt.AlignLeft)
-        self.grid.setSpacing(16)
+        self.grid.setSpacing(10)
         scroll.setWidget(self.grid_host)
         center.addWidget(scroll, 1)
 
@@ -118,6 +167,8 @@ class ClientWindow(QMainWindow):
             btn.clicked.connect(lambda _=False, c=cat.id: self._show_category(c))
             self.category_group.addButton(btn)
             self.category_bar.addWidget(btn)
+            self._cat_buttons[cat.id] = btn
+            self.cat_scroll.watch(btn)
             if first_button is None:
                 first_button, first_id = btn, cat.id
         self.category_bar.addStretch()
@@ -138,6 +189,9 @@ class ClientWindow(QMainWindow):
 
     def _show_category(self, category_id):
         self._current_category = category_id
+        btn = self._cat_buttons.get(category_id)
+        if btn is not None:
+            self.cat_scroll.ensureWidgetVisible(btn, 0, 0)
         self._clear_grid()
         items = [p for p in self.products if p.category_id == category_id]
         if not items:

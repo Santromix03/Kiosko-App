@@ -6,7 +6,8 @@ from core.models import Product
 from services.image_cache import cached_image_path
 from ui.common.assets import RED, icon_for_category
 
-IMG_W, IMG_H = 180, 130
+IMG_W, IMG_H = 148, 104
+CARD_W, CARD_H = 168, 200
 
 
 def format_price(value: int) -> str:
@@ -19,9 +20,9 @@ class CategoryButton(QToolButton):
         self.setObjectName("CategoryButton")
         self.setText(name)
         self.setCheckable(True)
-        self.setToolButtonStyle(Qt.ToolButtonTextUnderIcon)
-        self.setIconSize(QSize(36, 36))
-        self.setMinimumHeight(96)
+        self.setToolButtonStyle(Qt.ToolButtonTextBesideIcon)
+        self.setIconSize(QSize(22, 22))
+        self.setMinimumHeight(48)
         self.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Fixed)
         self._normal = icon_for_category(name, RED)
         self._active = icon_for_category(name, "#FFFFFF")
@@ -41,7 +42,7 @@ class ProductCard(QFrame):
         self.sold_out = product.max_qty is not None and product.max_qty <= 0
         self.setObjectName("ProductCard")
         self.setProperty("soldOut", self.sold_out)
-        self.setFixedSize(200, 250)
+        self.setFixedSize(CARD_W, CARD_H)
         self.setCursor(Qt.ArrowCursor if self.sold_out else Qt.PointingHandCursor)
 
         image = QLabel("Sin imagen")
