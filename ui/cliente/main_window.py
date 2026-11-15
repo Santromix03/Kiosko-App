@@ -1,5 +1,5 @@
 
-from PySide6.QtCore import Qt, QTimer, QEvent
+from PySide6.QtCore import Qt, QTimer, QEvent, Signal
 from PySide6.QtWidgets import (
     QButtonGroup, QGridLayout, QHBoxLayout, QLabel, QMainWindow,
     QPushButton, QScrollArea, QToolButton, QVBoxLayout, QWidget,
@@ -78,6 +78,27 @@ class CategoryScroll(QScrollArea):
         return super().eventFilter(obj, event)
 
 
+class LongPressLabel(QLabel):
+    """Etiqueta que avisa long_pressed si se mantiene presionada (acceso oculto)."""
+
+    long_pressed = Signal()
+
+    def __init__(self):
+        super().__init__()
+        self._timer = QTimer(self)
+        self._timer.setSingleShot(True)
+        self._timer.setInterval(2500)
+        self._timer.timeout.connect(self.long_pressed.emit)
+
+    def mousePressEvent(self, event):
+        self._timer.start()
+        super().mousePressEvent(event)
+
+    def mouseReleaseEvent(self, event):
+        self._timer.stop()
+        super().mouseReleaseEvent(event)
+
+
 class ClientWindow(QMainWindow):
     def __init__(self):
         super().__init__()
@@ -102,9 +123,12 @@ class ClientWindow(QMainWindow):
         root.setContentsMargins(10, 8, 10, 10)
         root.setSpacing(8)
 
-        title = QLabel(f"{config.NOMBRE_LOCAL.upper()} · TOMA TU PEDIDO")
+        title = LongPressLabel()
+        title.setText(f"{config.NOMBRE_LOCAL.upper()} · TOMA TU PEDIDO")
         title.setObjectName("Title")
         title.setAlignment(Qt.AlignCenter)
+        title.setCursor(Qt.PointingHandCursor)
+        title.long_pressed.connect(self._open_printer_setup)
         root.addWidget(title)
 
         # Categorías (fila horizontal con scroll)
@@ -266,6 +290,15 @@ class ClientWindow(QMainWindow):
         TicketDialog(self._last_ticket, printed, error=error or getattr(self, "_print_error", None),
                      parent=self).exec()
         self._print_error = None
+
+    # --- panel oculto de impresora (mantener presionado el título) ---
+    def _open_printer_setup(self):
+        from ui.cliente.printer_setup import PrinterSetupDialog
+        self._modal_open = True
+        try:
+            PrinterSetupDialog(self).exec()
+        finally:
+            self._modal_open = False
 
     def _on_order_error(self, message):
         self.cart_panel.set_busy(False)

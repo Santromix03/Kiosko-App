@@ -87,3 +87,16 @@ QScrollBar::add-page:vertical, QScrollBar::sub-page:vertical { background: trans
 #AddonCheck:disabled { color: #9A9A9A; }
 #AddonCheck::indicator:disabled { border-color: #CCCCCC; background: #F0EDEB; }
 #AddonTotal { font-size: 18px; font-weight: bold; color: #C21A1F; padding: 4px 0; }
+
+/* Panel de impresora */
+#SetupCombo, #SetupInput {
+    background: #FFFFFF; border: 1px solid #C21A1F; border-radius: 8px;
+    padding: 6px 8px; font-size: 14px;
+}
+#SetupList {
+    background: #FFFFFF; border: 1px solid #E8C9CB; border-radius: 8px;
+    font-size: 13px; padding: 4px;
+}
+#SetupList::item { padding: 10px 6px; }
+#SetupList::item:selected { background: #F6DADB; color: #C21A1F; }
+#SetupNote { color: #B26A00; font-size: 13px; padding: 4px; }
