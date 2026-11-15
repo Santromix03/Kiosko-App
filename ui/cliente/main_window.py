@@ -255,11 +255,17 @@ class ClientWindow(QMainWindow):
         self._show_ticket(printed=True)
 
     def _on_print_error(self, message):
-        print("Error de impresión:", message)
+        # motivo corto (última línea del traceback) para mostrarlo al usuario
+        lines = [ln.strip() for ln in message.splitlines() if ln.strip()]
+        self._print_error = lines[-1] if lines else "Error desconocido"
         self._show_ticket(printed=False)
 
-    def _show_ticket(self, printed):
-        TicketDialog(self._last_ticket, printed, parent=self).exec()
+    def _show_ticket(self, printed, error=None):
+        if printed:
+            error = None
+        TicketDialog(self._last_ticket, printed, error=error or getattr(self, "_print_error", None),
+                     parent=self).exec()
+        self._print_error = None
 
     def _on_order_error(self, message):
         self.cart_panel.set_busy(False)

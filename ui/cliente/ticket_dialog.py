@@ -3,7 +3,7 @@ from PySide6.QtWidgets import QDialog, QLabel, QPushButton, QVBoxLayout
 
 
 class TicketDialog(QDialog):
-    def __init__(self, ticket_number, printed=True, seconds=15, parent=None):
+    def __init__(self, ticket_number, printed=True, seconds=15, error=None, parent=None):
         super().__init__(parent)
         self.setWindowTitle("Pedido recibido")
         self.setModal(True)
@@ -35,6 +35,13 @@ class TicketDialog(QDialog):
         layout.addWidget(title)
         layout.addWidget(number)
         layout.addWidget(msg)
+        if error:
+            reason = QLabel(error)
+            reason.setObjectName("CartNote")
+            reason.setWordWrap(True)
+            reason.setAlignment(Qt.AlignCenter)
+            layout.addWidget(reason)
+        layout.addStretch()
         layout.addWidget(self.btn)
 
         self._update_button()

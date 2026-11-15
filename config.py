@@ -17,7 +17,9 @@ NOMBRE_LOCAL = os.getenv("NOMBRE_LOCAL", "Mi Restaurante")
 CACHE_DIR = BASE_DIR / "cache"
 
 TICKET_WIDTH = int(os.getenv("TICKET_WIDTH", "32"))
-PRINTER_MODE = os.getenv("PRINTER_MODE", "console")
+PRINTER_MODE = os.getenv("PRINTER_MODE") or (
+    "bluetooth" if os.getenv("PRINTER_MAC") else "console"
+)
 
 PRINTER_MAC = os.getenv("PRINTER_MAC", "")
 PRINTER_CHANNEL = int(os.getenv("PRINTER_CHANNEL") or 0)   # 0 = probar del 1 al 10

@@ -40,6 +40,7 @@ def _send_bluetooth(data: bytes) -> None:
         channels = ([_channel_cache] if _channel_cache else []) + list(range(1, 11))
 
     last_error = None
+    channel_errors = []
     for ch in channels:
         s = socket.socket(socket.AF_BLUETOOTH, socket.SOCK_STREAM, socket.BTPROTO_RFCOMM)
         s.settimeout(10)
@@ -47,6 +48,7 @@ def _send_bluetooth(data: bytes) -> None:
             s.connect((config.PRINTER_MAC, ch))
         except OSError as e:
             last_error = e
+            channel_errors.append(f"canal {ch}: {e.strerror or e}")
             s.close()
             continue
 
@@ -61,7 +63,11 @@ def _send_bluetooth(data: bytes) -> None:
         finally:
             s.close()
 
-    raise RuntimeError(f"No se pudo conectar a la impresora {config.PRINTER_MAC}: {last_error}")
+    raise RuntimeError(
+        f"No se pudo conectar a la impresora {config.PRINTER_MAC} "
+        f"(probé canales {channels[0]}-{channels[-1]}). "
+        + "; ".join(channel_errors[-3:])          # últimos 3 para no saturar la pantalla
+    )
 
 
 def print_ticket(img: Image.Image) -> None:
