@@ -9,3 +9,8 @@
 # Archivos generados
 *.log
 tickets/
+__pycache__/
+*.pyc
+build/
+dist/
+cache/

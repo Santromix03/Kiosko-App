@@ -116,14 +116,14 @@ class LoginDialog(QDialog):
     def _on_error(self, message):
         lines = [ln.strip() for ln in message.splitlines() if ln.strip()]
         msg = lines[-1] if lines else "No se pudo verificar"
+        # el error llega como "ValueError: el mensaje": se quita el prefijo
+        while ": " in msg and msg.split(": ", 1)[0].replace(".", "").isidentifier():
+            msg = msg.split(": ", 1)[1]
         low = msg.lower()
         if "invalid login credentials" in low:
             msg = "Correo o contraseña incorrectos"
         elif "email not confirmed" in low:
             msg = "Este correo aún no está confirmado en el sistema"
-        elif "could not find the function" in low or "verificar_empleado" in low:
-            msg = ("Falta crear la función SQL 'verificar_empleado' en Supabase "
-                   "(supabase.com/dashboard → SQL Editor)")
         self.setEnabled(True)
         self._busy = False
         self.btn.setText("Entrar")

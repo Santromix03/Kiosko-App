@@ -1,10 +1,13 @@
 import os
 import sys
+import threading
 
 from PySide6.QtCore import Qt
 from PySide6.QtWidgets import QApplication, QDialog, QMessageBox
 
 import config
+from core.workers import run_async
+from services import shift_service
 from ui.cliente.login_dialog import LoginDialog
 from ui.cliente.main_window import ClientWindow
 from ui.common.assets import load_fonts
@@ -42,14 +45,39 @@ def main() -> int:
     if login.exec() != QDialog.Accepted or not login.employee:
         return 0
 
+    employee = login.employee
+
     # 2) kiosco de pedidos
     window = ClientWindow()
-    window.employee = login.employee
+    window.employee = employee
     if config.KIOSK_FULLSCREEN:
         window.showFullScreen()
     else:
         window.resize(800, 480)          # pantalla táctil oficial de 7" de Raspberry Pi
         window.showMaximized()
+
+    # 3) turno del empleado: se abre al entrar y se cierra al salir de la app.
+    #    Mismos RPC que el panel web («Roles y turnos» → «En turno ahora»).
+    shift = {}
+
+    def on_shift_open(_shift):
+        shift["open"] = True
+
+    def on_shift_fail(_message):
+        pass   # ya quedó registrado en kiosko.log; no molesta al kiosco
+
+    run_async(shift_service.start_shift, on_shift_open, on_shift_fail)
+
+    def close_shift():
+        if not shift.get("open"):
+            return
+        # en otro hilo, pero esperando hasta 3s: al apagar no debe colgar la Pi
+        t = threading.Thread(target=shift_service.end_shift, daemon=True)
+        t.start()
+        t.join(timeout=3.0)
+
+    app.aboutToQuit.connect(close_shift)
+
     return app.exec()
 
 

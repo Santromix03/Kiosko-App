@@ -8,6 +8,41 @@ class _Signals(QObject):
     failed = Signal(str)
 
 
+class _Relay(QObject):
+    """Reenvía el resultado de la tarea al hilo principal.
+
+    El receptor de la señal de la tarea es un QObject del hilo principal,
+    así que Qt entrega en COLA ahí: los callbacks de la UI nunca corren
+    dentro del hilo del worker.
+    """
+
+    done = Signal(object)
+    fail = Signal(str)
+
+    def __init__(self, task):
+        super().__init__()
+        self._task = task          # mantiene viva la tarea hasta la entrega
+
+    @Slot(object)
+    def _on_done(self, result):
+        try:
+            self.done.emit(result)
+        finally:
+            _ACTIVE.discard(self)
+
+    @Slot(str)
+    def _on_fail(self, message):
+        try:
+            self.fail.emit(message)
+        finally:
+            _ACTIVE.discard(self)
+
+
+# Referencias vivas: si la tarea queda solo como variable local de run_async,
+# Python la recolecta y el resultado se pierde (aunque el hilo termine el trabajo).
+_ACTIVE: set = set()
+
+
 def _log_error(text: str) -> None:
     """Deja rastro del error en kiosko.log (junto al ejecutable) para depurar en la Pi."""
     try:
@@ -39,11 +74,17 @@ class _Task(QRunnable):
             self.signals.finished.emit(result)
 
 
-
 def run_async(fn, on_success, on_error=None, *args):
-    """Ejecuta fn(*args) en otro hilo y llama a on_success(resultado) en la UI."""
+    """Ejecuta fn(*args) en otro hilo y llama a on_success(resultado) en el hilo principal.
+
+    Si algo falla, llama a on_error(traza) y deja el error en kiosko.log.
+    """
     task = _Task(fn, *args)
-    task.signals.finished.connect(on_success)
-    if on_error:
-        task.signals.failed.connect(on_error)
+    relay = _Relay(task)
+    task.signals.finished.connect(relay._on_done)
+    task.signals.failed.connect(relay._on_fail)
+    relay.done.connect(on_success)          # ya llega en el hilo principal
+    if on_error is not None:
+        relay.fail.connect(on_error)
+    _ACTIVE.add(relay)
     QThreadPool.globalInstance().start(task)
