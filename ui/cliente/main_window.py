@@ -39,42 +39,67 @@ def _fetch_menu():
 
 
 class CategoryScroll(QScrollArea):
-    """Fila de categorías deslizable: arrastras con el dedo y el scroll sigue."""
+    """Fila de categorías deslizable con el dedo.
 
-    DRAG_THRESHOLD = 14   # px antes de considerar que es un arrastre, no un toque
+    - Un toque corto selecciona la categoría.
+    - Un arrastre mueve la fila y cancela la selección.
+    Los eventos de mouse fluyen normales (no se secuestran): así el mouse
+    grabado se libera bien y nada más se rompe. El click del botón se
+    ignora cuando viene de un arrastre.
+    """
+
+    DRAG_THRESHOLD = 14   # px antes de considerar que es arrastre, no toque
 
     def __init__(self):
         super().__init__()
-        self._press = None
+        self._press = None        # posición GLOBAL del press (no cambia al hacer scroll)
         self._dragging = False
+        self._suppress = False    # el próximo click del botón arrastrado se ignora
+        self._host = None
 
     def watch(self, btn):
         btn.installEventFilter(self)
 
+    def watch_host(self, host):
+        """También permite arrastrar desde los espacios entre botones."""
+        self._host = host
+        host.installEventFilter(self)
+
+    @property
+    def dragging(self):
+        return self._suppress
+
+    def _end_drag(self):
+        self._suppress = False
+
     def eventFilter(self, obj, event):
-        # QScrollArea usa este mismo filtro para sus scrollbars internos;
-        # solo procesamos eventos de los botones de categoría.
-        if not isinstance(obj, QToolButton):
-            return super().eventFilter(obj, event)
-        if event.type() == QEvent.MouseButtonPress:
-            self._press = event.position()
+        if not (isinstance(obj, QToolButton) or obj is self._host):
+            return super().eventFilter(obj, event)   # scrollbars internos, etc.
+
+        t = event.type()
+        if t == QEvent.MouseButtonPress:
+            self._press = event.globalPosition()
             self._dragging = False
-        elif event.type() == QEvent.MouseMove and self._press is not None:
-            dx = event.position().x() - self._press.x()
-            if self._dragging or abs(dx) > self.DRAG_THRESHOLD:
-                if not self._dragging:
-                    self._dragging = True
-                    obj.setDown(False)
-                    self._press = event.position()
+            self._suppress = False
+        elif t == QEvent.MouseMove and self._press is not None:
+            dx = event.globalPosition().x() - self._press.x()
+            if not self._dragging and abs(dx) > self.DRAG_THRESHOLD:
+                self._dragging = True
+                self._suppress = True
+                if isinstance(obj, QToolButton):
+                    obj.setDown(False)               # suelta el estado presionado
+            if self._dragging:
                 bar = self.horizontalScrollBar()
                 bar.setValue(bar.value() - int(dx))
-                self._press = event.position()
-            return True if self._dragging else False
-        elif event.type() == QEvent.MouseButtonRelease:
-            dragging, self._dragging, self._press = self._dragging, False, None
-            if dragging:
-                obj.setDown(False)
-                return True          # cancela el click si fue un arrastre
+                self._press = event.globalPosition()
+        elif t == QEvent.MouseButtonRelease:
+            if self._dragging:
+                if isinstance(obj, QToolButton):
+                    obj.setDown(False)
+                # el click emitido por este release se ignora (ver _select)
+                QTimer.singleShot(0, self._end_drag)
+            self._press = None
+            self._dragging = False
         return super().eventFilter(obj, event)
 
 
@@ -147,6 +172,7 @@ class ClientWindow(QMainWindow):
         self.cat_scroll.setHorizontalScrollBarPolicy(Qt.ScrollBarAsNeeded)
         self.cat_scroll.setFixedHeight(64)
         self.cat_scroll.setWidget(category_host)
+        self.cat_scroll.watch_host(category_host)
         root.addWidget(self.cat_scroll)
         self._cat_buttons = {}
 
@@ -188,7 +214,7 @@ class ClientWindow(QMainWindow):
         first_button, first_id = None, None
         for cat in categories:
             btn = CategoryButton(cat.name)
-            btn.clicked.connect(lambda _=False, c=cat.id: self._show_category(c))
+            btn.clicked.connect(lambda _=False, c=cat.id: self._select(c))
             self.category_group.addButton(btn)
             self.category_bar.addWidget(btn)
             self._cat_buttons[cat.id] = btn
@@ -203,6 +229,12 @@ class ClientWindow(QMainWindow):
 
     def _on_error(self, message):
         self.status.setText(f"No se pudo cargar el menú: {message}")
+
+    def _select(self, category_id):
+        """Ignora los clicks que en realidad fueron arrastres de la fila."""
+        if self.cat_scroll.dragging:
+            return
+        self._show_category(category_id)
 
     # --- productos ---
     def _clear_grid(self):

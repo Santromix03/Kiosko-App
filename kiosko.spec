@@ -19,6 +19,19 @@ for pkg in ('supabase', 'postgrest', 'gotrue', 'supabase_auth', 'realtime',
         binaries += b
         hiddenimports += h
 
+# Teclado en pantalla (QT_IM_MODULE=qtvirtualkeyboard) para el kiosco táctil
+import PySide6
+from pathlib import Path
+
+PYSIDE_DIR = Path(PySide6.__file__).resolve().parent
+for f in (PYSIDE_DIR / 'plugins' / 'platforminputcontexts').glob('*virtualkeyboard*'):
+    binaries.append((str(f), 'PySide6/plugins/platforminputcontexts'))
+vk_qml = PYSIDE_DIR / 'qml' / 'QtQuick' / 'VirtualKeyboard'
+if vk_qml.exists():
+    datas.append((str(vk_qml), 'PySide6/qml/QtQuick/VirtualKeyboard'))
+if importlib.util.find_spec('PySide6.QtVirtualKeyboard'):
+    hiddenimports.append('PySide6.QtVirtualKeyboard')
+
 a = Analysis(
     ['main_cliente.py'],
     pathex=[],
