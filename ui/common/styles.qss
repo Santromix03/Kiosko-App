@@ -118,3 +118,16 @@ QScrollBar::add-page:vertical, QScrollBar::sub-page:vertical { background: trans
     font-size: 12px; padding: 6px; margin-top: 4px;
 }
 #LoginClose:hover { color: #C21A1F; }
+
+/* Teclado táctil propio */
+#TouchKeyboard { background: transparent; }
+#KeyButton {
+    background: #FFFFFF; color: #2B2B2B; border: 1px solid #E8C9CB;
+    border-radius: 8px; font-size: 14px; font-weight: bold; padding: 2px;
+}
+#KeyButton:pressed { background: #F6DADB; color: #C21A1F; }
+#KeyAction {
+    background: #FFFFFF; color: #C21A1F; border: 1px solid #C21A1F;
+    border-radius: 8px; font-size: 14px; font-weight: bold; padding: 2px;
+}
+#KeyAction:pressed { background: #F6DADB; }

@@ -88,6 +88,13 @@ class LoginDialog(QDialog):
         root.addWidget(card, 0, Qt.AlignHCenter)
         root.addStretch(1)
 
+        # en modo kiosco: teclado táctil propio, siempre visible abajo
+        if self._kiosk:
+            from ui.common.touch_keyboard import TouchKeyboard
+            self.keyboard = TouchKeyboard()
+            self.keyboard.accepted.connect(self._submit)
+            root.addWidget(self.keyboard)
+
         self.email.setFocus()
 
     def _submit(self):

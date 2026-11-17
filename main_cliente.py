@@ -1,4 +1,3 @@
-import os
 import sys
 
 from PySide6.QtCore import Qt
@@ -11,11 +10,6 @@ from ui.common.assets import load_fonts
 
 
 def main() -> int:
-    if config.KIOSK_FULLSCREEN:
-        # teclado en pantalla para los campos de texto (pantalla táctil sin teclado físico)
-        os.environ["QT_IM_MODULE"] = "qtvirtualkeyboard"
-        os.environ.setdefault("QT_VIRTUALKEYBOARD_STYLE", "default")
-
     app = QApplication(sys.argv)
     load_fonts()
 
