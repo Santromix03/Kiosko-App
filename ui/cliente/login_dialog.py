@@ -80,12 +80,12 @@ class LoginDialog(QDialog):
         self.btn.clicked.connect(self._submit)
         layout.addWidget(self.btn)
 
-        if self._kiosk:                                   # modo kiosco: salida visible
-            self.btn_quit = QPushButton("X  Salir del kiosco")
-            self.btn_quit.setObjectName("LoginClose")
-            self.btn_quit.setCursor(Qt.PointingHandCursor)
-            self.btn_quit.clicked.connect(lambda: QApplication.instance().quit())
-            layout.addWidget(self.btn_quit)
+        # salida: funciona igual en Windows y Linux (cierra el diálogo y la app)
+        self.btn_quit = QPushButton("X  Salir del kiosco")
+        self.btn_quit.setObjectName("LoginClose")
+        self.btn_quit.setCursor(Qt.PointingHandCursor)
+        self.btn_quit.clicked.connect(self._salir_del_kiosco)
+        layout.addWidget(self.btn_quit)
 
         root.addWidget(card, 0, Qt.AlignHCenter)
         root.addStretch(1)
@@ -98,6 +98,13 @@ class LoginDialog(QDialog):
             root.addWidget(self.keyboard)
 
         self.email.setFocus()
+
+    def _salir_del_kiosco(self):
+        """Cierra el diálogo y toda la app, igual en Windows y en Linux."""
+        self.reject()
+        app = QApplication.instance()
+        if app is not None:
+            app.quit()
 
     def _submit(self):
         if self._busy:

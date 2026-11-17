@@ -125,6 +125,10 @@ class LongPressLabel(QLabel):
 
 
 class ClientWindow(QMainWindow):
+    """Kiosco de pedidos. `exit_requested` pide volver al login de empleado."""
+
+    exit_requested = Signal()
+
     def __init__(self):
         super().__init__()
         self.setWindowTitle(config.NOMBRE_LOCAL)
@@ -154,7 +158,19 @@ class ClientWindow(QMainWindow):
         title.setAlignment(Qt.AlignCenter)
         title.setCursor(Qt.PointingHandCursor)
         title.long_pressed.connect(self._open_printer_setup)
-        root.addWidget(title)
+
+        # Fila superior: X de salida (vuelve al login) + título
+        top = QHBoxLayout()
+        top.setSpacing(8)
+        self.btn_exit = QPushButton("X")
+        self.btn_exit.setObjectName("ExitButton")
+        self.btn_exit.setFixedSize(36, 36)
+        self.btn_exit.setCursor(Qt.PointingHandCursor)
+        self.btn_exit.setToolTip("Volver al login de empleado")
+        self.btn_exit.clicked.connect(self.exit_requested.emit)
+        top.addWidget(self.btn_exit)
+        top.addWidget(title, 1)
+        root.addLayout(top)
 
         # Categorías (fila horizontal con scroll)
         category_host = QWidget()

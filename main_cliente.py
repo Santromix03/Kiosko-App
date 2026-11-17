@@ -37,17 +37,25 @@ def main() -> int:
         )
         return 1
 
-    # 1) el empleado se identifica antes de poder tomar pedidos
-    login = LoginDialog(kiosk=config.KIOSK_FULLSCREEN)
-    if config.KIOSK_FULLSCREEN:
-        login.setWindowFlag(Qt.FramelessWindowHint)
-        login.showFullScreen()
-    if login.exec() != QDialog.Accepted or not login.employee:
-        return 0
+    # sesiones repetibles: la X del kiosco vuelve al login, y "Salir del
+    # kiosco" (en el login) cierra la app. Cada empleado tiene su turno.
+    while True:
+        login = LoginDialog(kiosk=config.KIOSK_FULLSCREEN)
+        if config.KIOSK_FULLSCREEN:
+            login.setWindowFlag(Qt.FramelessWindowHint)
+            login.showFullScreen()
+        if login.exec() != QDialog.Accepted or not login.employee:
+            return 0
+        if not _correr_sesion(app, login.employee):
+            return 0
 
-    employee = login.employee
 
-    # 2) kiosco de pedidos
+def _correr_sesion(app: QApplication, employee: dict) -> bool:
+    """Corre el kiosco para un empleado. Devuelve True si hay que volver al login.
+
+    Abre el turno del empleado al entrar (mismos RPC que el panel web,
+    «Roles y turnos» → «En turno ahora») y lo cierra al salir.
+    """
     window = ClientWindow()
     window.employee = employee
     if config.KIOSK_FULLSCREEN:
@@ -56,8 +64,6 @@ def main() -> int:
         window.resize(800, 480)          # pantalla táctil oficial de 7" de Raspberry Pi
         window.showMaximized()
 
-    # 3) turno del empleado: se abre al entrar y se cierra al salir de la app.
-    #    Mismos RPC que el panel web («Roles y turnos» → «En turno ahora»).
     shift = {}
 
     def on_shift_open(_shift):
@@ -71,6 +77,7 @@ def main() -> int:
     def close_shift():
         if not shift.get("open"):
             return
+        shift["open"] = False            # evita el doble cierre
         # en otro hilo, pero esperando hasta 3s: al apagar no debe colgar la Pi
         t = threading.Thread(target=shift_service.end_shift, daemon=True)
         t.start()
@@ -78,7 +85,24 @@ def main() -> int:
 
     app.aboutToQuit.connect(close_shift)
 
-    return app.exec()
+    volver = {"flag": False}
+
+    def volver_al_login():
+        volver["flag"] = True
+        app.quit()                       # termina el ciclo de eventos de la sesión
+
+    window.exit_requested.connect(volver_al_login)
+
+    try:
+        app.exec()
+    finally:
+        try:
+            app.aboutToQuit.disconnect(close_shift)
+        except Exception:
+            pass
+        close_shift()                    # por si la salida no pasó por aboutToQuit
+        window.close()
+    return volver["flag"]
 
 
 if __name__ == "__main__":

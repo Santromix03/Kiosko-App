@@ -3,6 +3,13 @@ QWidget { background: #FFFFFF; color: #2B2B2B; font-family: "Poppins"; font-size
 
 #Title { font-family: "Playfair Display"; font-size: 20px; font-weight: bold; color: #C21A1F; padding: 2px; }
 
+/* Botón X de salida del kiosco (vuelve al login) */
+#ExitButton {
+    background: #FFFFFF; color: #C21A1F; border: 2px solid #C21A1F;
+    border-radius: 18px; font-size: 15px; font-weight: bold; padding: 0;
+}
+#ExitButton:pressed { background: #F6DADB; }
+
 /* Categorías */
 #CategoryButton {
     background: #FFFFFF; color: #C21A1F; border: 1px solid #C21A1F;
