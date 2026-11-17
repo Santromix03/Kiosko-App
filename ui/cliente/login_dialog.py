@@ -21,22 +21,24 @@ class LoginDialog(QDialog):
         self._kiosk = kiosk
 
         root = QVBoxLayout(self)
+        root.setContentsMargins(0, 0, 0, 0)   # fullscreen: el fondo completo es de la app
+        root.setSpacing(0)
         root.addStretch(1)
 
         # --- tarjeta compacta centrada (no estira los campos) ---
         card = QFrame()
         card.setObjectName("LoginCard")
-        card.setFixedWidth(380)
+        card.setFixedWidth(340)
         layout = QVBoxLayout(card)
-        layout.setContentsMargins(24, 20, 24, 20)
-        layout.setSpacing(10)
+        layout.setContentsMargins(16, 12, 16, 12)
+        layout.setSpacing(6)
 
         logo_path = config.RESOURCE_DIR / "assets" / "logo.png"
         if logo_path.exists():
             logo = QLabel()
             logo.setAlignment(Qt.AlignCenter)
             logo.setPixmap(QPixmap(str(logo_path)).scaled(
-                56, 56, Qt.KeepAspectRatio, Qt.SmoothTransformation))
+                40, 40, Qt.KeepAspectRatio, Qt.SmoothTransformation))
             layout.addWidget(logo)
 
         title = QLabel(config.NOMBRE_LOCAL.upper())
@@ -48,7 +50,7 @@ class LoginDialog(QDialog):
         subtitle.setObjectName("LoginSubtitle")
         subtitle.setAlignment(Qt.AlignCenter)
         layout.addWidget(subtitle)
-        layout.addSpacing(4)
+        layout.addSpacing(2)
 
         self.email = QLineEdit()
         self.email.setObjectName("LoginInput")
@@ -70,16 +72,16 @@ class LoginDialog(QDialog):
         self.error.setWordWrap(True)
         self.error.hide()
         layout.addWidget(self.error)
-        layout.addSpacing(4)
+        layout.addSpacing(2)
 
         self.btn = QPushButton("Entrar")
         self.btn.setObjectName("ConfirmButton")
-        self.btn.setMinimumHeight(48)
+        self.btn.setMinimumHeight(38)
         self.btn.clicked.connect(self._submit)
         layout.addWidget(self.btn)
 
         if self._kiosk:                                   # modo kiosco: salida visible
-            self.btn_quit = QPushButton("✕  Salir del kiosco")
+            self.btn_quit = QPushButton("X  Salir del kiosco")
             self.btn_quit.setObjectName("LoginClose")
             self.btn_quit.setCursor(Qt.PointingHandCursor)
             self.btn_quit.clicked.connect(lambda: QApplication.instance().quit())

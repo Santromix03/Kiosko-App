@@ -1,3 +1,4 @@
+import os
 import sys
 
 from PySide6.QtCore import Qt
@@ -10,6 +11,14 @@ from ui.common.assets import load_fonts
 
 
 def main() -> int:
+    # La app trae su propio teclado táctil (el login lo usa). Si el entorno
+    # tiene configurado un IME de Qt (p.ej. QT_IM_MODULE=qtvirtualkeyboard
+    # instalado a mano o por una versión anterior), se desactiva: así ningún
+    # teclado del sistema asoma en los diálogos de la Pi.
+    os.environ.pop("QT_IM_MODULE", None)
+    for var in [k for k in os.environ if k.startswith("QT_VIRTUALKEYBOARD")]:
+        os.environ.pop(var, None)
+
     app = QApplication(sys.argv)
     load_fonts()
 

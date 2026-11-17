@@ -106,16 +106,16 @@ QScrollBar::add-page:vertical, QScrollBar::sub-page:vertical { background: trans
 #LoginCard {
     background: #FFFFFF; border: 1px solid #E8C9CB; border-radius: 14px;
 }
-#LoginTitle { font-family: "Playfair Display"; font-size: 24px; font-weight: bold; color: #C21A1F; padding: 2px; }
-#LoginSubtitle { color: #6B6B6B; font-size: 14px; }
+#LoginTitle { font-family: "Playfair Display"; font-size: 20px; font-weight: bold; color: #C21A1F; padding: 2px; }
+#LoginSubtitle { color: #6B6B6B; font-size: 12px; }
 #LoginInput {
     background: #FFFFFF; border: 1px solid #C21A1F; border-radius: 10px;
-    padding: 10px 12px; font-size: 14px; margin: 2px 0;
+    padding: 7px 10px; font-size: 13px; margin: 1px 0;
 }
-#LoginError { color: #C21A1F; font-size: 12px; padding: 2px; }
+#LoginError { color: #C21A1F; font-size: 11px; padding: 2px; }
 #LoginClose {
     background: transparent; border: none; color: #9A9A9A;
-    font-size: 12px; padding: 6px; margin-top: 4px;
+    font-size: 12px; padding: 4px; margin-top: 2px;
 }
 #LoginClose:hover { color: #C21A1F; }
 
@@ -123,11 +123,11 @@ QScrollBar::add-page:vertical, QScrollBar::sub-page:vertical { background: trans
 #TouchKeyboard { background: transparent; }
 #KeyButton {
     background: #FFFFFF; color: #2B2B2B; border: 1px solid #E8C9CB;
-    border-radius: 8px; font-size: 14px; font-weight: bold; padding: 2px;
+    border-radius: 8px; font-size: 13px; font-weight: bold; padding: 1px;
 }
 #KeyButton:pressed { background: #F6DADB; color: #C21A1F; }
 #KeyAction {
     background: #FFFFFF; color: #C21A1F; border: 1px solid #C21A1F;
-    border-radius: 8px; font-size: 14px; font-weight: bold; padding: 2px;
+    border-radius: 8px; font-size: 13px; font-weight: bold; padding: 1px;
 }
 #KeyAction:pressed { background: #F6DADB; }

@@ -21,8 +21,8 @@ class TouchKeyboard(QWidget):
         self._letter_keys = []
 
         g = QGridLayout(self)
-        g.setContentsMargins(4, 4, 4, 4)
-        g.setSpacing(4)
+        g.setContentsMargins(3, 3, 3, 3)
+        g.setSpacing(3)
         for col in range(10):
             g.setColumnStretch(col, 1)
 
@@ -59,7 +59,7 @@ class TouchKeyboard(QWidget):
     def _key(self, text, action=None, span=1):
         b = QPushButton(text)
         b.setObjectName("KeyButton" if action is None else "KeyAction")
-        b.setMinimumHeight(38)
+        b.setMinimumHeight(34)
         b.setFocusPolicy(Qt.NoFocus)
         b.setCursor(Qt.PointingHandCursor)
         if action is None:

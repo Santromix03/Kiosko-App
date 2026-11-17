@@ -19,18 +19,9 @@ for pkg in ('supabase', 'postgrest', 'gotrue', 'supabase_auth', 'realtime',
         binaries += b
         hiddenimports += h
 
-# Teclado en pantalla (QT_IM_MODULE=qtvirtualkeyboard) para el kiosco táctil
-import PySide6
-from pathlib import Path
-
-PYSIDE_DIR = Path(PySide6.__file__).resolve().parent
-for f in (PYSIDE_DIR / 'plugins' / 'platforminputcontexts').glob('*virtualkeyboard*'):
-    binaries.append((str(f), 'PySide6/plugins/platforminputcontexts'))
-vk_qml = PYSIDE_DIR / 'qml' / 'QtQuick' / 'VirtualKeyboard'
-if vk_qml.exists():
-    datas.append((str(vk_qml), 'PySide6/qml/QtQuick/VirtualKeyboard'))
-if importlib.util.find_spec('PySide6.QtVirtualKeyboard'):
-    hiddenimports.append('PySide6.QtVirtualKeyboard')
+# NOTA: NO se incluye el teclado virtual de Qt (qtvirtualkeyboard). La app trae
+# su propio teclado táctil (ui/common/touch_keyboard.py); si el plugin viajara
+# en el build, el teclado de Qt podría asomar en cualquier diálogo de la Pi.
 
 a = Analysis(
     ['main_cliente.py'],
@@ -40,9 +31,13 @@ a = Analysis(
     hiddenimports=hiddenimports,
     hookspath=[],
     runtime_hooks=[],
-    excludes=['tkinter'],
+    excludes=['tkinter', 'PySide6.QtVirtualKeyboard'],
     noarchive=False,
 )
+# Por si algún hook de PyInstaller arrastrara piezas del teclado virtual de Qt
+# (plugin IME, DLL y layouts QML), se descartan explícitamente del build.
+a.binaries = [b for b in a.binaries if 'virtualkeyboard' not in b[0].lower()]
+a.datas = [d for d in a.datas if 'virtualkeyboard' not in d[0].lower()]
 pyz = PYZ(a.pure)
 
 exe = EXE(
