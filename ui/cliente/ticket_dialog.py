@@ -7,7 +7,6 @@ class TicketDialog(QDialog):
         super().__init__(parent)
         self.setWindowTitle("Pedido recibido")
         self.setModal(True)
-        self.setMinimumSize(560, 340)
         self._left = seconds
 
         title = QLabel("¡Pedido recibido!")

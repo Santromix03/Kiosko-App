@@ -1,8 +1,10 @@
 import sys
 
-from PySide6.QtWidgets import QApplication, QMessageBox
+from PySide6.QtCore import Qt
+from PySide6.QtWidgets import QApplication, QDialog, QMessageBox
 
 import config
+from ui.cliente.login_dialog import LoginDialog
 from ui.cliente.main_window import ClientWindow
 from ui.common.assets import load_fonts
 
@@ -23,9 +25,22 @@ def main() -> int:
         )
         return 1
 
+    # 1) el empleado se identifica antes de poder tomar pedidos
+    login = LoginDialog(kiosk=config.KIOSK_FULLSCREEN)
+    if config.KIOSK_FULLSCREEN:
+        login.setWindowFlag(Qt.FramelessWindowHint)
+        login.showFullScreen()
+    if login.exec() != QDialog.Accepted or not login.employee:
+        return 0
+
+    # 2) kiosco de pedidos
     window = ClientWindow()
-    window.resize(800, 480)          # pantalla táctil oficial de 7" de Raspberry Pi
-    window.showMaximized()
+    window.employee = login.employee
+    if config.KIOSK_FULLSCREEN:
+        window.showFullScreen()
+    else:
+        window.resize(800, 480)          # pantalla táctil oficial de 7" de Raspberry Pi
+        window.showMaximized()
     return app.exec()
 
 

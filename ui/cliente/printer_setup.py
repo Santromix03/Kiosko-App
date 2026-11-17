@@ -6,7 +6,7 @@ from PIL import Image, ImageDraw
 from PySide6.QtCore import Qt
 from PySide6.QtWidgets import (
     QComboBox, QDialog, QHBoxLayout, QLabel, QLineEdit, QListWidget,
-    QPushButton, QSpinBox, QVBoxLayout,
+    QPushButton, QSpinBox, QVBoxLayout, QApplication,
 )
 
 import config
@@ -158,7 +158,12 @@ class PrinterSetupDialog(QDialog):
         close_btn.setObjectName("ClearButton")
         close_btn.setMinimumHeight(48)
         close_btn.clicked.connect(self.reject)
+        quit_btn = QPushButton("Salir del kiosco")
+        quit_btn.setObjectName("ClearButton")
+        quit_btn.setMinimumHeight(48)
+        quit_btn.clicked.connect(lambda: QApplication.instance().quit())
         row4.addWidget(close_btn)
+        row4.addWidget(quit_btn)
         row4.addWidget(save_btn, 1)
 
         layout = QVBoxLayout(self)

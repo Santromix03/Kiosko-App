@@ -14,6 +14,7 @@ load_dotenv(BASE_DIR / ".env")
 SUPABASE_URL = os.getenv("SUPABASE_URL", "")
 SUPABASE_ANON_KEY = os.getenv("SUPABASE_ANON_KEY", "")
 NOMBRE_LOCAL = os.getenv("NOMBRE_LOCAL", "Mi Restaurante")
+KIOSK_FULLSCREEN = os.getenv("KIOSK_FULLSCREEN", "").lower() in ("1", "true", "si", "yes")
 CACHE_DIR = BASE_DIR / "cache"
 
 TICKET_WIDTH = int(os.getenv("TICKET_WIDTH", "32"))

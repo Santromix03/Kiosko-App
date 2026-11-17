@@ -1,0 +1,10 @@
+# Entra al inicio de sesión de Raspberry Pi OS (LXDE-pi / PiX).
+# El instalador (deploy/instalar_pi.sh) genera una copia con la ruta real
+# en ~/.config/autostart/kiosko.desktop
+[Desktop Entry]
+Type=Application
+Name=Kiosko Cafemafe
+Comment=Kiosco de pedidos (arranque automático)
+Exec=__APP_DIR__/iniciar_kiosko.sh
+Terminal=false
+X-GNOME-Autostart-enabled=true
