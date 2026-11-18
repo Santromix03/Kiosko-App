@@ -36,6 +36,8 @@ class CategoryButton(QToolButton):
 class ProductCard(QFrame):
     clicked = Signal(object)
 
+    dragging_check = None   # lo asigna GridScroll: True si el toque fue arrastre
+
     def __init__(self, product: Product):
         super().__init__()
         self.product = product
@@ -91,5 +93,14 @@ class ProductCard(QFrame):
         label.setPixmap(rounded)
 
     def mousePressEvent(self, event):
-        if not self.sold_out:
-            self.clicked.emit(self.product)
+        # El click se emite al SOLTAR (no al presionar): así un arrastre de la
+        # cuadrícula no agrega el producto al carrito por accidente.
+        self._press_ok = not self.sold_out and event.button() == Qt.LeftButton
+
+    def mouseReleaseEvent(self, event):
+        if not self._press_ok:
+            return
+        self._press_ok = False
+        if self.dragging_check is not None and self.dragging_check():
+            return                       # fue un arrastre, no un toque
+        self.clicked.emit(self.product)

@@ -103,6 +103,69 @@ class CategoryScroll(QScrollArea):
         return super().eventFilter(obj, event)
 
 
+class GridScroll(QScrollArea):
+    """Cuadrícula de productos deslizable con el dedo, como la fila de categorías.
+
+    - Un toque corto agrega el producto al carrito (la tarjeta emite el click).
+    - Un arrastre desliza la lista y cancela el toque.
+    Los eventos de mouse fluyen normales (no se secuestran): el filtro solo
+    observa tarjetas y el fondo de la cuadrícula.
+    """
+
+    DRAG_THRESHOLD = 14   # px antes de considerar que es arrastre, no toque
+
+    def __init__(self):
+        super().__init__()
+        self._press = None        # posición GLOBAL del press (no cambia al hacer scroll)
+        self._dragging = False
+        self._suppress = False    # el click de la tarjeta arrastrada se ignora
+        self._host = None
+
+    def watch(self, card):
+        card.dragging_check = lambda: self._suppress
+        card.installEventFilter(self)
+
+    def watch_host(self, host):
+        """También permite arrastrar desde los espacios entre tarjetas."""
+        self._host = host
+        host.installEventFilter(self)
+
+    @property
+    def dragging(self):
+        return self._suppress
+
+    def _end_drag(self):
+        self._suppress = False
+
+    def eventFilter(self, obj, event):
+        if not (isinstance(obj, ProductCard) or obj is self._host):
+            return super().eventFilter(obj, event)   # scrollbars internos, etc.
+
+        t = event.type()
+        if t == QEvent.MouseButtonPress:
+            self._press = event.globalPosition()
+            self._dragging = False
+            self._suppress = False
+        elif t == QEvent.MouseMove and self._press is not None:
+            d = event.globalPosition() - self._press
+            if not self._dragging and (
+                abs(d.x()) > self.DRAG_THRESHOLD or abs(d.y()) > self.DRAG_THRESHOLD
+            ):
+                self._dragging = True
+                self._suppress = True
+            if self._dragging:
+                bar = self.verticalScrollBar()
+                bar.setValue(bar.value() - int(d.y()))
+                self._press = event.globalPosition()
+        elif t == QEvent.MouseButtonRelease:
+            if self._dragging:
+                # el click que este release emitiría se ignora (ver ProductCard)
+                QTimer.singleShot(0, self._end_drag)
+            self._press = None
+            self._dragging = False
+        return super().eventFilter(obj, event)
+
+
 class LongPressLabel(QLabel):
     """Etiqueta que avisa long_pressed si se mantiene presionada (acceso oculto)."""
 
@@ -204,16 +267,19 @@ class ClientWindow(QMainWindow):
         self.status.setAlignment(Qt.AlignCenter)
         center.addWidget(self.status)
 
-        scroll = QScrollArea()
-        scroll.setWidgetResizable(True)
-        scroll.setFrameShape(QScrollArea.NoFrame)
-        scroll.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
+        self.grid_scroll = GridScroll()
+        self.grid_scroll.setObjectName("ProductScroll")
+        self.grid_scroll.setWidgetResizable(True)
+        self.grid_scroll.setFrameShape(QScrollArea.NoFrame)
+        self.grid_scroll.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
+        self.grid_scroll.setVerticalScrollBarPolicy(Qt.ScrollBarAsNeeded)
         self.grid_host = QWidget()
         self.grid = QGridLayout(self.grid_host)
         self.grid.setAlignment(Qt.AlignTop | Qt.AlignLeft)
         self.grid.setSpacing(10)
-        scroll.setWidget(self.grid_host)
-        center.addWidget(scroll, 1)
+        self.grid_scroll.setWidget(self.grid_host)
+        self.grid_scroll.watch_host(self.grid_host)
+        center.addWidget(self.grid_scroll, 1)
 
         # Carrito (derecha)
         self.cart_panel = CartPanel(self.cart)
@@ -274,6 +340,7 @@ class ClientWindow(QMainWindow):
         for i, product in enumerate(items):
             card = ProductCard(product)
             card.clicked.connect(self._add_to_cart)
+            self.grid_scroll.watch(card)
             self.grid.addWidget(card, i // COLUMNS, i % COLUMNS)
 
     # --- carrito ---
