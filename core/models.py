@@ -37,11 +37,13 @@ class CartItem:
     product: Product
     quantity: int = 1
     addons: tuple[Addon, ...] = ()
+    note: str = ""                   # observaciones del cliente (opcional)
 
     @property
     def key(self) -> tuple:
-        """Identifica la línea: mismo producto + mismas adiciones."""
-        return (self.product.id, tuple(sorted(a.id for a in self.addons)))
+        """Identifica la línea: mismo producto + adiciones + observación."""
+        return (self.product.id, tuple(sorted(a.id for a in self.addons)),
+                self.note.strip().lower())
 
     @property
     def unit_price(self) -> int:

@@ -230,8 +230,12 @@ class ClientWindow(QMainWindow):
             return
 
         addons = ()
+        note = ""
         offered = [a for a in self.addons if product.category_id in a.category_ids]
-        if any(self.cart.addon_left(a) >= 1 for a in offered):
+        if offered:
+            # Se abre siempre que haya adiciones de la categoría: las agotadas
+            # se muestran como tales (antes el cuadro no salía si el stock era 0
+            # y parecía que el producto no tenía adiciones).
             left = {a.id: self.cart.addon_left(a) for a in offered}
             dialog = AddonsDialog(product, offered, left, parent=self)
             self._modal_open = True
@@ -242,17 +246,20 @@ class ClientWindow(QMainWindow):
             if not accepted:
                 return
             addons = dialog.selected_addons()
+            note = dialog.selected_note()
 
         reason = self.cart.blocked_reason(product, addons)   
         if reason:
             self.cart_panel.flash(reason)
             return
-        self.cart.add(product, addons)
+        self.cart.add(product, addons, note)
         self.cart_panel.refresh()
 
     def _confirm_order(self):
         # Copia de lo que se está pidiendo, para armar el ticket después
-        self._snapshot = [CartItem(i.product, i.quantity, i.addons) for i in self.cart.items]
+        self._snapshot = [
+            CartItem(i.product, i.quantity, i.addons, i.note) for i in self.cart.items
+        ]
         self.centralWidget().setEnabled(False)   
         self.cart_panel.set_busy(True)
         run_async(create_order, self._on_order_ok, self._on_order_error, self.cart)

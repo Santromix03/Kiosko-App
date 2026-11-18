@@ -116,7 +116,7 @@ def render_ticket(ticket_number: int, items, total: int, when: datetime | None =
 
     # --- Tabla ---
     hline(2)
-    qty_w, val_w = int(54 * s), int(112 * s)
+    qty_w, val_w = int(60 * s), int(104 * s)
     prod_x = MARGIN + qty_w
     prod_w = W - 2 * MARGIN - qty_w - val_w
     d.text((MARGIN, y), "Cant", font=f_bold, fill=0)
@@ -139,6 +139,11 @@ def render_ticket(ticket_number: int, items, total: int, when: datetime | None =
                 if k == 0:
                     av = _money(a.price * it.quantity)
                     d.text((W - MARGIN - d.textlength(av, font=f_small), y), av, font=f_small, fill=0)
+                y += lh(f_small)
+        note = (getattr(it, "note", "") or "").strip()
+        if note:
+            for ln in _wrap(d, f"* {note}", f_small, prod_w):
+                d.text((prod_x, y), ln, font=f_small, fill=0)
                 y += lh(f_small)
         y += 6
 

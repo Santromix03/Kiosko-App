@@ -71,6 +71,8 @@ class CartPanel(QFrame):
         text = item.product.name
         if item.addons:
             text += "\n+ " + ", ".join(a.name for a in item.addons)
+        if item.note:
+            text += f"\nNota: {item.note}"
         text += f"\n{format_price(item.subtotal)}"
         name = QLabel(text)
         name.setObjectName("CartRow")
@@ -101,7 +103,7 @@ class CartPanel(QFrame):
         if reason:
             self.flash(reason)
             return
-        self.cart.add(item.product, item.addons)
+        self.cart.add(item.product, item.addons, item.note)
         self.refresh()
 
     def _minus(self, key):

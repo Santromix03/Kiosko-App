@@ -39,10 +39,10 @@ class Cart:
         return self.blocked_reason(product, addons) is None
 
     # ---------- edición ----------
-    def add(self, product: Product, addons=()) -> bool:
+    def add(self, product: Product, addons=(), note: str = "") -> bool:
         if self.blocked_reason(product, addons):
             return False
-        item = CartItem(product, 1, tuple(addons))
+        item = CartItem(product, 1, tuple(addons), (note or "").strip())
         existing = self._items.get(item.key)
         if existing:
             existing.quantity += 1

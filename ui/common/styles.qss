@@ -135,6 +135,26 @@ QScrollBar::add-page:vertical, QScrollBar::sub-page:vertical { background: trans
 #AddonCheck:disabled { color: #9A9A9A; }
 #AddonCheck::indicator:disabled { border-color: #CCCCCC; background: #F0EDEB; }
 #AddonTotal { font-size: 18px; font-weight: bold; color: #C21A1F; padding: 2px 0; }
+#AddonsScroll { background: transparent; border: none; }
+#AddonsScroll > QWidget > QWidget { background: transparent; }
+
+/* Observaciones del producto (opcional) */
+#NoteButton {
+    background: #FFFFFF; color: #C21A1F; border: 1px dashed #C21A1F;
+    border-radius: 10px; font-size: 13px; font-weight: bold;
+    padding: 6px 10px; text-align: left;
+}
+#NoteButton:pressed { background: #F6DADB; }
+#NoteDialog { background: #FFFFFF; }
+#NoteInput {
+    background: #FFFFFF; border: 1px solid #C21A1F; border-radius: 10px;
+    padding: 8px 12px; font-size: 15px;
+}
+#NoteClear {
+    background: transparent; color: #B26A00; border: 1px solid #B26A00;
+    border-radius: 10px; padding: 8px 14px; font-weight: bold; font-size: 13px;
+}
+#NoteClear:pressed { background: #FBF0DF; }
 
 /* Panel de impresora */
 #SetupCombo, #SetupInput {

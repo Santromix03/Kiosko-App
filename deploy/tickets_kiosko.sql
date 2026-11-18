@@ -2,19 +2,26 @@
 -- Tickets del kiosco: listar los pedidos del día y cancelarlos
 -- Ejecutar UNA vez en Supabase -> SQL Editor (es seguro repetirlo).
 --
--- Crea dos funciones:
+-- Crea tres funciones:
 --   public.get_today_tickets()
---       Devuelve los pedidos de HOY (hora de Colombia) con sus productos y
---       adiciones, en el mismo formato que usa el panel. Así el kiosco no
---       necesita permisos para leer las tablas de ventas.
+--       Devuelve los pedidos de HOY (hora de Colombia) con sus productos,
+--       adiciones y observaciones, en el mismo formato que usa el panel.
+--       Así el kiosco no necesita permisos para leer las tablas de ventas.
+--   public.save_order_notes(p_ticket_number bigint, p_notes jsonb)
+--       Guarda las observaciones de cada línea del pedido recién creado
+--       (para que la reimpresión desde Tickets también las muestre).
 --   public.cancel_ticket(p_order_id bigint)
 --       Cancela un pedido de HOY: devuelve el stock de las adiciones y de
 --       los productos con stock directo, y borra el ticket. Todo en una
 --       sola transacción (si algo falla, no se borra nada).
 --
--- Las dos solo las pueden usar administradores o empleados activos (los
+-- Las tres solo las pueden usar administradores o empleados activos (los
 -- mismos que entran al kiosco con su cuenta). La clave anónima no puede.
 -- =====================================================================
+
+-- ---------- 0) Observaciones por producto ----------
+-- La app guarda aquí lo que el cliente escribe en «Añadir observación».
+alter table public.order_items add column if not exists note text;
 
 -- ---------- 1) Pedidos de hoy ----------
 create or replace function public.get_today_tickets()
@@ -46,6 +53,7 @@ begin
                             'name', oi.name,
                             'quantity', oi.quantity,
                             'unit_price', oi.unit_price,
+                            'note', oi.note,
                             'addons', coalesce((
                               select jsonb_agg(
                                        jsonb_build_object(
@@ -68,7 +76,58 @@ begin
 end;
 $$;
 
--- ---------- 2) Cancelar un pedido de hoy ----------
+-- ---------- 2) Guardar las observaciones del pedido ----------
+create or replace function public.save_order_notes(p_ticket_number bigint, p_notes jsonb)
+returns void
+language plpgsql
+security definer
+set search_path = public
+as $$
+declare
+  v_order bigint;
+  v_note  jsonb;
+  v_line  int;
+begin
+  if coalesce(public.my_role(), 'ninguno') not in ('admin', 'employee') then
+    raise exception 'Solo un empleado activo puede guardar observaciones';
+  end if;
+
+  -- El pedido más reciente de hoy con ese número de ticket
+  select id into v_order
+    from public.orders
+   where ticket_number = p_ticket_number
+     and order_date = (now() at time zone 'America/Bogota')::date
+   order by created_at desc
+   limit 1;
+
+  if v_order is null then
+    return;                     -- no se pudo ubicar; la nota ya va impresa
+  end if;
+
+  for v_note in select * from jsonb_array_elements(coalesce(p_notes, '[]'::jsonb))
+  loop
+    begin
+      v_line := (v_note->>'line')::int;
+    exception when others then
+      continue;
+    end;
+    if v_line is null or v_line < 0 then
+      continue;
+    end if;
+
+    update public.order_items oi
+       set note = nullif(left(trim(v_note->>'note'), 200), '')
+     where oi.id = (
+       select id from public.order_items
+        where order_id = v_order
+        order by id
+        offset v_line limit 1
+     );
+  end loop;
+end;
+$$;
+
+-- ---------- 3) Cancelar un pedido de hoy ----------
 create or replace function public.cancel_ticket(p_order_id bigint)
 returns jsonb
 language plpgsql
@@ -147,6 +206,9 @@ $$;
 -- empleado). La clave pública anónima NO puede ver ni cancelar ventas.
 revoke all on function public.get_today_tickets() from public, anon;
 grant execute on function public.get_today_tickets() to authenticated;
+
+revoke all on function public.save_order_notes(bigint, jsonb) from public, anon;
+grant execute on function public.save_order_notes(bigint, jsonb) to authenticated;
 
 revoke all on function public.cancel_ticket(bigint) from public, anon;
 grant execute on function public.cancel_ticket(bigint) to authenticated;

@@ -47,6 +47,7 @@ class TicketItem:
     quantity: int
     unit_price: int
     addons: tuple[TicketAddon, ...] = ()
+    note: str = ""
 
 
 @dataclass
@@ -68,6 +69,8 @@ class Ticket:
             texto = f"{it.quantity}× {it.name}"
             if it.addons:
                 texto += " (+ " + ", ".join(a.name for a in it.addons) + ")"
+            if it.note:
+                texto += f" — {it.note}"
             partes.append(texto)
         texto = " · ".join(partes) or "Sin productos"
         if len(texto) <= max_len:
@@ -105,6 +108,7 @@ def _tickets_from_payload(data) -> list[Ticket]:
                     quantity=int(it.get("quantity") or 1),
                     unit_price=int(it.get("unit_price") or 0),
                     addons=addons,
+                    note=(it.get("note") or "").strip(),
                 )
             )
         tickets.append(
@@ -145,6 +149,27 @@ def cancel_ticket(ticket: Ticket) -> int:
     return ticket.number
 
 
+def notes_payload(items) -> list[dict]:
+    """Observaciones del pedido por número de línea (el orden del carrito)."""
+    payload = []
+    for i, item in enumerate(items):
+        note = (getattr(item, "note", "") or "").strip()
+        if note:
+            payload.append({"line": i, "note": note})
+    return payload
+
+
+def save_order_notes(ticket_number: int, items) -> None:
+    """Guarda las observaciones del pedido recién creado (para reimprimir)."""
+    payload = notes_payload(items)
+    if not payload:
+        return
+    get_client().rpc(
+        "save_order_notes",
+        {"p_ticket_number": ticket_number, "p_notes": payload},
+    ).execute()
+
+
 def reprint_ticket(ticket: Ticket) -> None:
     """Vuelve a imprimir un ticket con la misma imagen que el original."""
     lineas = [
@@ -154,6 +179,7 @@ def reprint_ticket(ticket: Ticket) -> None:
             addons=tuple(
                 SimpleNamespace(name=a.name, price=a.price) for a in it.addons
             ),
+            note=it.note,
         )
         for it in ticket.items
     ]
