@@ -48,7 +48,7 @@ def _load_logo(max_w: int, max_h: int):
     return gray.convert("1").convert("L")      # tramado para que la térmica lo imprima bien
 
 
-def render_ticket(ticket_number: int, items, total: int) -> Image.Image:
+def render_ticket(ticket_number: int, items, total: int, when: datetime | None = None) -> Image.Image:
     W = config.PAPER_PX
     s = W / 384                                 # escala para papel de 80 mm
 
@@ -103,7 +103,7 @@ def render_ticket(ticket_number: int, items, total: int) -> Image.Image:
     hline(3, 14)
 
     # --- Fecha y pedido ---
-    label_value("Fecha: ", datetime.now().strftime("%Y-%m-%d %H:%M:%S"), f_norm)
+    label_value("Fecha: ", (when or datetime.now()).strftime("%Y-%m-%d %H:%M:%S"), f_norm)
     label_value("Pedido: ", f"#{ticket_number}", f_bold)
 
     # --- Caja PREFACTURA ---

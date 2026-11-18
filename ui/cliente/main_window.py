@@ -1,27 +1,24 @@
 
-from PySide6.QtCore import Qt, QTimer, QEvent, Signal
+from PySide6.QtCore import Qt, QTimer, Signal
 from PySide6.QtWidgets import (
     QButtonGroup, QGridLayout, QHBoxLayout, QLabel, QMainWindow,
-    QPushButton, QScrollArea, QToolButton, QVBoxLayout, QWidget,
+    QMessageBox, QPushButton, QScrollArea, QVBoxLayout, QWidget,
 )
 
 import config
 from core.cart import Cart
-from core.workers import run_async
-from services.catalog_service import get_categories, get_products
-from PySide6.QtWidgets import QMessageBox
-from services.order_service import create_order
-from ui.cliente.cart_panel import CartPanel
-from ui.common.widgets import ProductCard, format_price
 from core.models import CartItem
-from ui.cliente.ticket_dialog import TicketDialog
-from services.image_cache import download_image
-from PySide6.QtCore import Qt, QTimer
-from ui.common.widgets import CategoryButton, ProductCard, format_price
+from core.workers import run_async
 from services.catalog_service import get_addons, get_categories, get_products
-from ui.cliente.addons_dialog import AddonsDialog
+from services.image_cache import download_image
+from services.order_service import create_order
 from services.printer_service import print_ticket
 from services.ticket_renderer import render_ticket
+from ui.cliente.addons_dialog import AddonsDialog
+from ui.cliente.cart_panel import CartPanel
+from ui.cliente.ticket_dialog import TicketDialog
+from ui.cliente.tickets_dialog import TicketsDialog
+from ui.common.widgets import CategoryButton, DragScroll, ProductCard
 
 COLUMNS = 3
 
@@ -36,134 +33,6 @@ def _fetch_stock():
 def _fetch_menu():
     products, addons = _fetch_stock()
     return get_categories(), products, addons
-
-
-class CategoryScroll(QScrollArea):
-    """Fila de categorías deslizable con el dedo.
-
-    - Un toque corto selecciona la categoría.
-    - Un arrastre mueve la fila y cancela la selección.
-    Los eventos de mouse fluyen normales (no se secuestran): así el mouse
-    grabado se libera bien y nada más se rompe. El click del botón se
-    ignora cuando viene de un arrastre.
-    """
-
-    DRAG_THRESHOLD = 14   # px antes de considerar que es arrastre, no toque
-
-    def __init__(self):
-        super().__init__()
-        self._press = None        # posición GLOBAL del press (no cambia al hacer scroll)
-        self._dragging = False
-        self._suppress = False    # el próximo click del botón arrastrado se ignora
-        self._host = None
-
-    def watch(self, btn):
-        btn.installEventFilter(self)
-
-    def watch_host(self, host):
-        """También permite arrastrar desde los espacios entre botones."""
-        self._host = host
-        host.installEventFilter(self)
-
-    @property
-    def dragging(self):
-        return self._suppress
-
-    def _end_drag(self):
-        self._suppress = False
-
-    def eventFilter(self, obj, event):
-        if not (isinstance(obj, QToolButton) or obj is self._host):
-            return super().eventFilter(obj, event)   # scrollbars internos, etc.
-
-        t = event.type()
-        if t == QEvent.MouseButtonPress:
-            self._press = event.globalPosition()
-            self._dragging = False
-            self._suppress = False
-        elif t == QEvent.MouseMove and self._press is not None:
-            dx = event.globalPosition().x() - self._press.x()
-            if not self._dragging and abs(dx) > self.DRAG_THRESHOLD:
-                self._dragging = True
-                self._suppress = True
-                if isinstance(obj, QToolButton):
-                    obj.setDown(False)               # suelta el estado presionado
-            if self._dragging:
-                bar = self.horizontalScrollBar()
-                bar.setValue(bar.value() - int(dx))
-                self._press = event.globalPosition()
-        elif t == QEvent.MouseButtonRelease:
-            if self._dragging:
-                if isinstance(obj, QToolButton):
-                    obj.setDown(False)
-                # el click emitido por este release se ignora (ver _select)
-                QTimer.singleShot(0, self._end_drag)
-            self._press = None
-            self._dragging = False
-        return super().eventFilter(obj, event)
-
-
-class GridScroll(QScrollArea):
-    """Cuadrícula de productos deslizable con el dedo, como la fila de categorías.
-
-    - Un toque corto agrega el producto al carrito (la tarjeta emite el click).
-    - Un arrastre desliza la lista y cancela el toque.
-    Los eventos de mouse fluyen normales (no se secuestran): el filtro solo
-    observa tarjetas y el fondo de la cuadrícula.
-    """
-
-    DRAG_THRESHOLD = 14   # px antes de considerar que es arrastre, no toque
-
-    def __init__(self):
-        super().__init__()
-        self._press = None        # posición GLOBAL del press (no cambia al hacer scroll)
-        self._dragging = False
-        self._suppress = False    # el click de la tarjeta arrastrada se ignora
-        self._host = None
-
-    def watch(self, card):
-        card.dragging_check = lambda: self._suppress
-        card.installEventFilter(self)
-
-    def watch_host(self, host):
-        """También permite arrastrar desde los espacios entre tarjetas."""
-        self._host = host
-        host.installEventFilter(self)
-
-    @property
-    def dragging(self):
-        return self._suppress
-
-    def _end_drag(self):
-        self._suppress = False
-
-    def eventFilter(self, obj, event):
-        if not (isinstance(obj, ProductCard) or obj is self._host):
-            return super().eventFilter(obj, event)   # scrollbars internos, etc.
-
-        t = event.type()
-        if t == QEvent.MouseButtonPress:
-            self._press = event.globalPosition()
-            self._dragging = False
-            self._suppress = False
-        elif t == QEvent.MouseMove and self._press is not None:
-            d = event.globalPosition() - self._press
-            if not self._dragging and (
-                abs(d.x()) > self.DRAG_THRESHOLD or abs(d.y()) > self.DRAG_THRESHOLD
-            ):
-                self._dragging = True
-                self._suppress = True
-            if self._dragging:
-                bar = self.verticalScrollBar()
-                bar.setValue(bar.value() - int(d.y()))
-                self._press = event.globalPosition()
-        elif t == QEvent.MouseButtonRelease:
-            if self._dragging:
-                # el click que este release emitiría se ignora (ver ProductCard)
-                QTimer.singleShot(0, self._end_drag)
-            self._press = None
-            self._dragging = False
-        return super().eventFilter(obj, event)
 
 
 class LongPressLabel(QLabel):
@@ -232,6 +101,15 @@ class ClientWindow(QMainWindow):
         self.btn_exit.setToolTip("Volver al login de empleado")
         self.btn_exit.clicked.connect(self.exit_requested.emit)
         top.addWidget(self.btn_exit)
+
+        self.btn_tickets = QPushButton("Tickets")
+        self.btn_tickets.setObjectName("TicketsButton")
+        self.btn_tickets.setFixedHeight(36)
+        self.btn_tickets.setCursor(Qt.PointingHandCursor)
+        self.btn_tickets.setToolTip("Pedidos del día: imprimir o cancelar")
+        self.btn_tickets.clicked.connect(self._open_tickets)
+        top.addWidget(self.btn_tickets)
+
         top.addWidget(title, 1)
         root.addLayout(top)
 
@@ -243,7 +121,7 @@ class ClientWindow(QMainWindow):
         self.category_group = QButtonGroup(self)
         self.category_group.setExclusive(True)
 
-        self.cat_scroll = CategoryScroll()
+        self.cat_scroll = DragScroll(Qt.Horizontal)
         self.cat_scroll.setObjectName("CategoryScroll")
         self.cat_scroll.setWidgetResizable(True)
         self.cat_scroll.setFrameShape(QScrollArea.NoFrame)
@@ -267,7 +145,7 @@ class ClientWindow(QMainWindow):
         self.status.setAlignment(Qt.AlignCenter)
         center.addWidget(self.status)
 
-        self.grid_scroll = GridScroll()
+        self.grid_scroll = DragScroll(Qt.Vertical)
         self.grid_scroll.setObjectName("ProductScroll")
         self.grid_scroll.setWidgetResizable(True)
         self.grid_scroll.setFrameShape(QScrollArea.NoFrame)
@@ -340,7 +218,7 @@ class ClientWindow(QMainWindow):
         for i, product in enumerate(items):
             card = ProductCard(product)
             card.clicked.connect(self._add_to_cart)
-            self.grid_scroll.watch(card)
+            self.grid_scroll.watch(card, "dragging_check")
             self.grid.addWidget(card, i // COLUMNS, i % COLUMNS)
 
     # --- carrito ---
@@ -405,6 +283,16 @@ class ClientWindow(QMainWindow):
         TicketDialog(self._last_ticket, printed, error=error or getattr(self, "_print_error", None),
                      parent=self).exec()
         self._print_error = None
+
+    # --- tickets del día (imprimir de nuevo / cancelar) ---
+    def _open_tickets(self):
+        if self._modal_open:
+            return
+        self._modal_open = True
+        try:
+            TicketsDialog(self).exec()
+        finally:
+            self._modal_open = False
 
     # --- panel oculto de impresora (mantener presionado el título) ---
     def _open_printer_setup(self):

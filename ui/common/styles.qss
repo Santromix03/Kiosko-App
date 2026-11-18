@@ -10,6 +10,47 @@ QWidget { background: #FFFFFF; color: #2B2B2B; font-family: "Poppins"; font-size
 }
 #ExitButton:pressed { background: #F6DADB; }
 
+/* Botón Tickets (pedidos del día) */
+#TicketsButton {
+    background: #FFFFFF; color: #C21A1F; border: 2px solid #C21A1F;
+    border-radius: 10px; font-size: 14px; font-weight: bold; padding: 0 14px;
+}
+#TicketsButton:pressed { background: #F6DADB; }
+
+/* Pantalla de tickets del día */
+#TicketsDialog { background: #FFFFFF; }
+#TicketsTitle {
+    font-family: "Playfair Display"; font-size: 20px; font-weight: bold;
+    color: #C21A1F; padding: 0 4px;
+}
+#TicketsBack, #TicketsRefresh {
+    background: #FFFFFF; color: #C21A1F; border: 1px solid #C21A1F;
+    border-radius: 10px; font-size: 13px; font-weight: bold;
+}
+#TicketsBack:pressed, #TicketsRefresh:pressed { background: #F6DADB; }
+#TicketsRefresh:disabled { color: #CDB9BA; border-color: #E5D5D6; }
+#TicketsScroll { background: transparent; }
+#TicketsStatus { color: #6B6B6B; font-size: 12px; padding: 0 4px; }
+#TicketRow { background: #FFFFFF; border: 1px solid #E8C9CB; border-radius: 12px; }
+#TicketRowNumber { font-size: 15px; font-weight: bold; color: #C21A1F; }
+#TicketTime { color: #6B6B6B; font-size: 12px; }
+#TicketRowTotal { font-size: 16px; font-weight: bold; color: #2B2B2B; }
+#TicketItems { color: #555555; font-size: 12px; }
+#TicketPrint {
+    background: #C21A1F; color: #FFFFFF; border: none; border-radius: 8px;
+    font-size: 13px; font-weight: bold;
+}
+#TicketPrint:pressed { background: #8E1116; }
+#TicketCancel {
+    background: #FFFFFF; color: #C21A1F; border: 1px solid #C21A1F;
+    border-radius: 8px; font-size: 13px; font-weight: bold;
+}
+#TicketCancel:pressed { background: #F6DADB; }
+#TicketPrint:disabled, #TicketCancel:disabled {
+    background: #F7F2F1; color: #CDB9BA; border-color: #E5D5D6;
+}
+#ConfirmText { color: #555555; font-size: 13px; }
+
 /* Categorías */
 #CategoryButton {
     background: #FFFFFF; color: #C21A1F; border: 1px solid #C21A1F;

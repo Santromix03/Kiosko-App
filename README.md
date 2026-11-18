@@ -61,6 +61,7 @@ CAPTURAS (descomenta cuando guardes las imágenes en docs/img/)
 | Carrito con botones **＋ / －** y total en vivo | El menú se **refresca solo cada 15 s** con el stock real |
 | **Adiciones** con casillas, solo las que corresponden a la categoría del producto | El carrito **no deja pedir más de lo que hay** y muestra *Agotado* |
 | **Ticket** con número del día y vista previa | Precios y stock **validados en el servidor**, nunca en la pantalla |
+| **Tickets del día**: reimprimir o cancelar desde la pantalla | Cancelar **devuelve el stock** y borra el pedido de hoy |
 | Diseño minimalista rojo y blanco, pensado para **pantalla táctil** | Cada adición tiene su **propio stock** y categorías permitidas |
 
 ---
@@ -188,6 +189,8 @@ Las **adiciones** (aloe, fibra, té herbal…) funcionan aparte: precio, **stock
 | `adjust_ingredient_stock` | Función RPC | Suma o resta stock de un ingrediente (nunca baja de 0) |
 | `apply_direct_stock` | Trigger | Descuenta el stock directo al insertar una línea de pedido |
 | `check_addon_category` | Trigger | Impide vender una adición en una categoría no permitida |
+| `cancel_ticket(p_order_id)` | Función RPC | Cancela un pedido de hoy, devuelve el stock y borra el ticket (`deploy/tickets_kiosko.sql`) |
+| `get_today_tickets()` | Función RPC | Lista los pedidos de hoy con productos y adiciones para la pantalla Tickets |
 
 </details>
 
@@ -269,6 +272,10 @@ Las fuentes viajan dentro del proyecto para que se vean igual en la Raspberry Pi
 python main_cliente.py
 ```
 
+> Para la pantalla **Tickets** (reimprimir / cancelar), ejecuta una vez
+> `deploy/tickets_kiosko.sql` en Supabase → SQL Editor. Sin eso, cancelar
+> muestra un aviso recordándolo.
+
 ---
 
 ## Stack
@@ -297,11 +304,12 @@ Kiosko/
 ├── services/                ← todo lo que habla con el exterior
 │   ├── catalog_service.py   ← menú, productos y adiciones
 │   ├── order_service.py     ← envía el pedido (create_order)
+│   ├── tickets_service.py   ← tickets del día: listar, reimprimir y cancelar
 │   ├── image_cache.py       ← descarga y cachea fotos
 │   └── printer_service.py   ← arma e imprime el ticket
 ├── ui/
 │   ├── common/              ← estilos (QSS), widgets y assets reutilizables
-│   └── cliente/             ← ventana principal, carrito, adiciones y ticket
+│   └── cliente/             ← ventana principal, carrito, adiciones, ticket y tickets del día
 ├── assets/                  ← íconos y fuentes
 ├── cache/                   ← fotos descargadas (no se sube a Git)
 └── tickets/                 ← tickets generados en modo `file` (no se sube a Git)
@@ -383,6 +391,7 @@ Faltan archivos en `assets/icons/` o `assets/fonts/`. Los productos sin foto mue
 - [x] Adiciones con stock propio y categorías permitidas
 - [x] Stock por ingredientes (unidad, g, ml) y stock directo
 - [x] Ticket con número diario, vista previa e impresión a archivo o consola
+- [x] **Tickets del día** en el kiosco: reimprimir y cancelar con devolución de stock
 - [x] Panel de administración web (repositorio aparte)
 - [ ] Impresión en **impresora térmica ESC/POS** desde la Pi
 - [ ] **Modo kiosco**: pantalla completa y reinicio del pedido por inactividad

@@ -1,6 +1,11 @@
-from PySide6.QtCore import QSize, Qt, Signal
+import weakref
+
+from PySide6.QtCore import QEvent, QSize, Qt, QTimer, Signal
 from PySide6.QtGui import QPainter, QPainterPath, QPixmap
-from PySide6.QtWidgets import QFrame, QLabel, QSizePolicy, QToolButton, QVBoxLayout
+from PySide6.QtWidgets import (
+    QAbstractButton, QFrame, QLabel, QScrollArea, QSizePolicy, QToolButton,
+    QVBoxLayout,
+)
 
 from core.models import Product
 from services.image_cache import cached_image_path
@@ -31,6 +36,89 @@ class CategoryButton(QToolButton):
 
     def _on_toggled(self, on: bool):
         self.setIcon(self._active if on else self._normal)
+
+
+class DragScroll(QScrollArea):
+    """Lista o grilla deslizable con el dedo (horizontal o vertical).
+
+    - Un toque corto hace el clic normal del elemento (categoría, producto,
+      botón de un ticket).
+    - Un arrastre mueve la lista y cancela ese clic.
+    Los eventos de mouse fluyen normales (no se secuestran): así el mouse
+    grabado se libera bien y nada más se rompe.
+
+    `watch(widget, "dragging_check")` deja en el widget una función para
+    saber si el toque terminó siendo arrastre (así ProductCard / TicketRow
+    pueden ignorar el clic).
+    """
+
+    DRAG_THRESHOLD = 14   # px antes de considerar que es arrastre, no toque
+
+    def __init__(self, orientation=Qt.Vertical):
+        super().__init__()
+        self._orientation = orientation
+        self._press = None        # posición GLOBAL del press (no cambia al hacer scroll)
+        self._dragging = False
+        self._suppress = False    # el clic del elemento arrastrado se ignora
+        self._watched = weakref.WeakSet()
+        self._host = None
+
+    def watch(self, widget, check_attr: str | None = None):
+        if check_attr:
+            setattr(widget, check_attr, lambda: self._suppress)
+        self._watched.add(widget)
+        widget.installEventFilter(self)
+
+    def watch_host(self, host):
+        """También permite arrastrar desde los espacios entre elementos."""
+        self._host = host
+        host.installEventFilter(self)
+
+    @property
+    def dragging(self):
+        return self._suppress
+
+    def _end_drag(self):
+        self._suppress = False
+
+    def eventFilter(self, obj, event):
+        if obj is not self._host and obj not in self._watched:
+            return super().eventFilter(obj, event)   # scrollbars internos, etc.
+
+        t = event.type()
+        if t == QEvent.MouseButtonPress:
+            self._press = event.globalPosition()
+            self._dragging = False
+            self._suppress = False
+        elif t == QEvent.MouseMove and self._press is not None:
+            d = event.globalPosition() - self._press
+            if self._orientation == Qt.Horizontal:
+                passed = abs(d.x()) > self.DRAG_THRESHOLD
+            else:
+                passed = (abs(d.x()) > self.DRAG_THRESHOLD
+                          or abs(d.y()) > self.DRAG_THRESHOLD)
+            if not self._dragging and passed:
+                self._dragging = True
+                self._suppress = True
+                if isinstance(obj, QAbstractButton):
+                    obj.setDown(False)               # suelta el estado presionado
+            if self._dragging:
+                if self._orientation == Qt.Horizontal:
+                    bar = self.horizontalScrollBar()
+                    bar.setValue(bar.value() - int(d.x()))
+                else:
+                    bar = self.verticalScrollBar()
+                    bar.setValue(bar.value() - int(d.y()))
+                self._press = event.globalPosition()
+        elif t == QEvent.MouseButtonRelease:
+            if self._dragging:
+                if isinstance(obj, QAbstractButton):
+                    obj.setDown(False)
+                # el clic emitido por este release se ignora (ver el check_attr)
+                QTimer.singleShot(0, self._end_drag)
+            self._press = None
+            self._dragging = False
+        return super().eventFilter(obj, event)
 
 
 class ProductCard(QFrame):
