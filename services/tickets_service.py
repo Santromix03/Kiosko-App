@@ -48,6 +48,7 @@ class TicketItem:
     unit_price: int
     addons: tuple[TicketAddon, ...] = ()
     note: str = ""
+    category: str = ""
 
 
 @dataclass
@@ -109,6 +110,7 @@ def _tickets_from_payload(data) -> list[Ticket]:
                     unit_price=int(it.get("unit_price") or 0),
                     addons=addons,
                     note=(it.get("note") or "").strip(),
+                    category=(it.get("category") or "").strip(),
                 )
             )
         tickets.append(
@@ -180,6 +182,7 @@ def reprint_ticket(ticket: Ticket) -> None:
                 SimpleNamespace(name=a.name, price=a.price) for a in it.addons
             ),
             note=it.note,
+            category=it.category,
         )
         for it in ticket.items
     ]

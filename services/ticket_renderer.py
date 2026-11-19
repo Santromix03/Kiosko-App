@@ -48,7 +48,13 @@ def _load_logo(max_w: int, max_h: int):
     return gray.convert("1").convert("L")      # tramado para que la térmica lo imprima bien
 
 
-def render_ticket(ticket_number: int, items, total: int, when: datetime | None = None) -> Image.Image:
+def render_ticket(
+    ticket_number: int,
+    items,
+    total: int,
+    when: datetime | None = None,
+    category_names: dict[int, str] | None = None,
+) -> Image.Image:
     W = config.PAPER_PX
     s = W / 384                                 # escala para papel de 80 mm
 
@@ -125,27 +131,55 @@ def render_ticket(ticket_number: int, items, total: int, when: datetime | None =
     y += lh(f_bold)
     hline(2)
 
+    # Agrupa por categoría (en el orden en que aparecen en el pedido) para
+    # que el cliente y la cocina sepan a qué grupo pertenece cada producto.
+    def category_of(item) -> str:
+        direct = (getattr(item, "category", "") or "").strip()
+        if direct:
+            return direct
+        product = getattr(item, "product", None)
+        category_id = getattr(product, "category_id", None)
+        return ((category_names or {}).get(category_id) or "").strip()
+
+    groups: list[tuple[str, list]] = []
+    positions: dict[str, int] = {}
     for it in items:
-        top = y
-        d.text((MARGIN, top), str(it.quantity), font=f_norm, fill=0)
-        value = _money(it.product.price * it.quantity)
-        d.text((W - MARGIN - d.textlength(value, font=f_norm), top), value, font=f_norm, fill=0)
-        for ln in _wrap(d, it.product.name.upper(), f_norm, prod_w):
-            d.text((prod_x, y), ln, font=f_norm, fill=0)
-            y += lh(f_norm)
-        for a in it.addons:
-            for k, ln in enumerate(_wrap(d, f"+ {a.name}", f_small, prod_w)):
-                d.text((prod_x, y), ln, font=f_small, fill=0)
-                if k == 0:
-                    av = _money(a.price * it.quantity)
-                    d.text((W - MARGIN - d.textlength(av, font=f_small), y), av, font=f_small, fill=0)
-                y += lh(f_small)
-        note = (getattr(it, "note", "") or "").strip()
-        if note:
-            for ln in _wrap(d, f"* {note}", f_small, prod_w):
-                d.text((prod_x, y), ln, font=f_small, fill=0)
-                y += lh(f_small)
-        y += 6
+        name = category_of(it)
+        key = name.casefold()
+        if key not in positions:
+            positions[key] = len(groups)
+            groups.append((name, []))
+        groups[positions[key]][1].append(it)
+
+    for category_name, group_items in groups:
+        if category_name:
+            y += 2
+            for ln in _wrap(d, category_name.upper(), f_bold, W - 2 * MARGIN):
+                d.text((MARGIN, y), ln, font=f_bold, fill=0)
+                y += lh(f_bold)
+            y += 2
+
+        for it in group_items:
+            top = y
+            d.text((MARGIN, top), str(it.quantity), font=f_norm, fill=0)
+            value = _money(it.product.price * it.quantity)
+            d.text((W - MARGIN - d.textlength(value, font=f_norm), top), value, font=f_norm, fill=0)
+            for ln in _wrap(d, it.product.name.upper(), f_norm, prod_w):
+                d.text((prod_x, y), ln, font=f_norm, fill=0)
+                y += lh(f_norm)
+            for a in it.addons:
+                for k, ln in enumerate(_wrap(d, f"+ {a.name}", f_small, prod_w)):
+                    d.text((prod_x, y), ln, font=f_small, fill=0)
+                    if k == 0:
+                        av = _money(a.price * it.quantity)
+                        d.text((W - MARGIN - d.textlength(av, font=f_small), y), av, font=f_small, fill=0)
+                    y += lh(f_small)
+            note = (getattr(it, "note", "") or "").strip()
+            if note:
+                for ln in _wrap(d, f"* {note}", f_small, prod_w):
+                    d.text((prod_x, y), ln, font=f_small, fill=0)
+                    y += lh(f_small)
+            y += 6
 
     # --- Totales ---
     hline(2)
@@ -157,6 +191,6 @@ def render_ticket(ticket_number: int, items, total: int, when: datetime | None =
     # --- Pie ---
     center("Paga en caja con este ticket", f_bold, gap=2)
     center("¡Gracias por tu compra!", f_norm)
-    y += 40
+    y += 80                         # margen extra para que el corte no toque el texto
     return img.crop((0, 0, W, y))
 

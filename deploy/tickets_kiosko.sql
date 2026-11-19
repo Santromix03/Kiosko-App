@@ -54,6 +54,12 @@ begin
                             'quantity', oi.quantity,
                             'unit_price', oi.unit_price,
                             'note', oi.note,
+                            'category', coalesce((
+                              select c.name
+                                from public.products p
+                                join public.categories c on c.id = p.category_id
+                               where p.id = oi.product_id
+                            ), ''),
                             'addons', coalesce((
                               select jsonb_agg(
                                        jsonb_build_object(

@@ -61,7 +61,7 @@ CAPTURAS (descomenta cuando guardes las imágenes en docs/img/)
 | Carrito con botones **＋ / －** y total en vivo; toca **“Tu pedido”** para verlo a pantalla completa | El menú se **refresca solo cada 15 s** con el stock real |
 | **Adiciones** en columnas de hasta 5 filas (10 → 2×5, 15 → 3×5), solo las de la categoría; las agotadas se ven marcadas *Agotado* | El carrito **no deja pedir más de lo que hay** y muestra *Agotado* |
 | **Observaciones opcionales** por producto, escritas con el teclado táctil de la app | La observación separa las líneas del carrito y **sale impresa en el ticket** |
-| **Ticket** con número del día y vista previa | Precios y stock **validados en el servidor**, nunca en la pantalla |
+| **Ticket** con número del día, productos **agrupados por categoría** y margen extra antes del corte | Precios y stock **validados en el servidor**, nunca en la pantalla |
 | **Tickets del día**: reimprimir o cancelar desde la pantalla | Cancelar **devuelve el stock** y borra el pedido de hoy |
 | Diseño minimalista rojo y blanco, pensado para **pantalla táctil** | Cada adición tiene su **propio stock** y categorías permitidas |
 
@@ -275,10 +275,12 @@ python main_cliente.py
 ```
 
 > Para la pantalla **Tickets** (reimprimir / cancelar) y para que las
-> **observaciones** se guarden y salgan en la reimpresión, ejecuta una vez
-> `deploy/tickets_kiosko.sql` en Supabase → SQL Editor. Sin eso, cancelar
-> muestra un aviso recordándolo y las observaciones solo salen en el ticket
-> recién impreso.
+> **observaciones** y la **categoría** salgan también en la reimpresión,
+> ejecuta una vez `deploy/tickets_kiosko.sql` en Supabase → SQL Editor.
+> Si actualizas desde una versión anterior, vuelve a pegar el archivo: la
+> versión nueva agrega la categoría al listado de tickets del día. Sin eso,
+> cancelar muestra un aviso recordándolo y la reimpresión solo mostrará lo
+> que ya estaba guardado.
 
 ---
 
@@ -398,6 +400,7 @@ Faltan archivos en `assets/icons/` o `assets/fonts/`. Los productos sin foto mue
 - [x] **Tickets del día** en el kiosco: reimprimir y cancelar con devolución de stock
 - [x] **Observaciones opcionales** por producto con teclado táctil, impresas en el ticket
 - [x] **Detalle del pedido a pantalla completa**, con cantidades y su X para volver
+- [x] Ticket con **encabezados de categoría** y más espacio antes del corte
 - [x] Panel de administración web (repositorio aparte)
 - [ ] Impresión en **impresora térmica ESC/POS** desde la Pi
 - [ ] **Modo kiosco**: pantalla completa y reinicio del pedido por inactividad

@@ -40,6 +40,7 @@ def main():
             "name": "Hamburguesa doble", "quantity": 1, "unit_price": 20000,
             "addons": [{"name": "Queso", "unit_price": 4000}],
             "note": "  sin cebolla  ",
+            "category": "Hamburguesas",
         }],
     }]
     parsed = _tickets_from_payload(raw)
@@ -48,6 +49,7 @@ def main():
     assert parsed[0].summary() == "1× Hamburguesa doble (+ Queso) — sin cebolla"
     assert parsed[0].items[0].addons[0].price == 4000
     assert parsed[0].items[0].note == "sin cebolla"
+    assert parsed[0].items[0].category == "Hamburguesas"
     assert len(_tickets_from_payload(json.dumps(raw))) == 1
     print("parseo RPC OK")
 
@@ -66,8 +68,9 @@ def main():
         for i in range(9)
     ]
     tickets[0].items[0].note = "sin salsa"
+    tickets[0].items[0].category = "Hamburguesas"
 
-    calls = {"reprint": [], "cancel": [], "notes": []}
+    calls = {"reprint": [], "cancel": [], "notes": [], "categories": []}
 
     def fake_fetch():
         return list(tickets)
@@ -75,6 +78,7 @@ def main():
     def fake_reprint(ticket):
         calls["reprint"].append(ticket.number)
         calls["notes"].append(ticket.items[0].note if ticket.items else "")
+        calls["categories"].append(ticket.items[0].category if ticket.items else "")
 
     def fake_cancel(ticket):
         calls["cancel"].append(ticket.number)
@@ -155,6 +159,7 @@ def main():
     )
     print("reimprimir ->", calls["reprint"], "| estado:", dialog.status.text())
     assert calls["notes"] == ["sin salsa"], calls["notes"]
+    assert calls["categories"] == ["Hamburguesas"], calls["categories"]
 
     # ---- 3) cancelar el segundo ticket ----
     target = rows[1].ticket.number

@@ -56,7 +56,7 @@ def image_to_raster(img: Image.Image) -> bytes:
         h = chunk.height
         out += b"\x1d\x76\x30\x00" + bytes([row_bytes & 0xFF, row_bytes >> 8, h & 0xFF, h >> 8])
         out += chunk.tobytes()
-    out += b"\x1b\x64\x04"                          # avanza 4 líneas para poder cortar
+    out += b"\x1b\x64\x06"                          # avanza 6 líneas para poder cortar
     return bytes(out)
 
 

@@ -68,6 +68,7 @@ class ClientWindow(QMainWindow):
         self.cart = Cart()
         self.products = []
         self.addons = []
+        self._category_names: dict[int, str] = {}
         self._modal_open = False
         self._current_category = None
         self._refreshing = False
@@ -171,6 +172,7 @@ class ClientWindow(QMainWindow):
         categories, products, addons = data
         self.products = products
         self.addons = addons
+        self._category_names = {cat.id: cat.name for cat in categories}
         self.status.hide()
 
         first_button, first_id = None, None
@@ -284,7 +286,10 @@ class ClientWindow(QMainWindow):
         self.cart_panel.refresh()
         self.centralWidget().setEnabled(True)
 
-        image = render_ticket(result.ticket_number, items, result.total)
+        image = render_ticket(
+            result.ticket_number, items, result.total,
+            category_names=self._category_names,
+        )
         self._last_ticket = result.ticket_number
         run_async(print_ticket, self._on_printed, self._on_print_error, image)
 
