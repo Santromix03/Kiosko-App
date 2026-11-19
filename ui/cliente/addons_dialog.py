@@ -1,13 +1,14 @@
 from PySide6.QtCore import Qt
 from PySide6.QtWidgets import (
-    QCheckBox, QDialog, QHBoxLayout, QLabel, QLineEdit, QPushButton,
-    QScrollArea, QVBoxLayout, QWidget,
+    QCheckBox, QDialog, QGridLayout, QHBoxLayout, QLabel, QLineEdit,
+    QPushButton, QVBoxLayout, QWidget,
 )
 
 from ui.common.touch_keyboard import TouchKeyboard
-from ui.common.widgets import DragScroll, format_price
+from ui.common.widgets import format_price
 
 MAX_NOTE = 120
+MAX_ADDON_ROWS = 5      # las adiciones se reparten en columnas de máximo 5 filas
 
 
 class NoteDialog(QDialog):
@@ -84,10 +85,11 @@ class AddonsDialog(QDialog):
         self.setWindowTitle("Adiciones")
         self.setObjectName("AddonsDialog")
         self.setModal(True)
-        self.setFixedWidth(470)
         self.product = product
         self._rows = []
         self._note = (note or "").strip()
+        self.columns = 0
+        self.rows_per_column = 0
 
         title = QLabel(product.name)
         title.setObjectName("AddonTitle")
@@ -111,36 +113,47 @@ class AddonsDialog(QDialog):
         layout.addWidget(subtitle)
 
         if addons:
+            # Columnas de máximo 5 filas. Si hay 10 adiciones salen 2×5,
+            # con 15 salen 3×5, con 11 salen 3 columnas equilibradas (4/4/3).
+            total = len(addons)
+            self.columns = max(1, -(-total // MAX_ADDON_ROWS))
+            self.rows_per_column = -(-total // self.columns)
+            # En la Pi (800 px) el cuadro ocupa casi todo el ancho disponible.
+            width = 620 if self.columns <= 2 else 780
+            self.setFixedWidth(width)
+
             host = QWidget()
-            rows = QVBoxLayout(host)
-            rows.setContentsMargins(0, 0, 0, 0)
-            rows.setSpacing(2)
-            rows.setAlignment(Qt.AlignTop)
+            host.setObjectName("AddonsGrid")
+            grid = QGridLayout(host)
+            grid.setContentsMargins(0, 0, 0, 0)
+            grid.setHorizontalSpacing(10)
+            grid.setVerticalSpacing(2)
+            for col in range(self.columns):
+                grid.setColumnStretch(col, 1)
 
-            self.scroll = DragScroll(Qt.Vertical)
-            self.scroll.setObjectName("AddonsScroll")
-            self.scroll.setFrameShape(QScrollArea.NoFrame)
-            self.scroll.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
-            self.scroll.setWidgetResizable(True)
-            self.scroll.setFixedHeight(200)
-            self.scroll.setWidget(host)
-            self.scroll.watch_host(host)
-
-            for addon in addons:
+            # Con 4+ columnas el nombre y el precio van en dos líneas para
+            # que no se recorten en la pantalla de 7".
+            dense = self.columns >= 4
+            for i, addon in enumerate(addons):
                 sold_out = left_by_id.get(addon.id, 0) < 1
-                text = (f"{addon.name}  ·  Agotado" if sold_out
-                        else f"{addon.name}  ·  +{format_price(addon.price)}")
+                price = "Agotado" if sold_out else format_price(addon.price)
+                if dense:
+                    text = f"{addon.name}\n{price}"
+                else:
+                    text = f"{addon.name}   {price}"
                 check = QCheckBox(text)
-                check.setObjectName("AddonCheck")
+                check.setObjectName("AddonCheckDense" if dense else "AddonCheck")
                 check.setEnabled(not sold_out)
-                check.setMinimumHeight(36)
+                check.setMinimumHeight(44 if dense else 36)
+                check.setToolTip(f"{addon.name} · {price}")
                 check.toggled.connect(self._update_total)
-                self.scroll.watch(check)
-                rows.addWidget(check)
+                # Llenado por columnas: primero se baja por la columna 1.
+                grid.addWidget(check, i % self.rows_per_column, i // self.rows_per_column)
                 self._rows.append((check, addon))
-            layout.addWidget(self.scroll)
+            layout.addWidget(host)
+            self.grid = grid
         else:
-            self.scroll = None
+            self.grid = None
 
         self.note_btn = QPushButton()
         self.note_btn.setObjectName("NoteButton")

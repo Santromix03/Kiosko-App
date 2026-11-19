@@ -94,10 +94,11 @@ QScrollBar::add-page:vertical, QScrollBar::sub-page:vertical { background: trans
 
 /* Carrito */
 #CartPanel { background: #FFFFFF; border: 1px solid #E8C9CB; border-radius: 12px; }
-#CartTitle {
+#CartTitleButton {
     background: #C21A1F; color: #FFFFFF; font-size: 15px; font-weight: bold;
-    padding: 8px; border-radius: 8px;
+    border: none; border-radius: 8px; padding: 8px;
 }
+#CartTitleButton:pressed { background: #8E1116; }
 #CartRow { font-size: 12px; }
 #CartTotal { font-size: 20px; font-weight: bold; color: #C21A1F; padding: 4px 2px; }
 #CartNote { color: #B26A00; font-size: 12px; padding: 2px; }
@@ -118,6 +119,29 @@ QScrollBar::add-page:vertical, QScrollBar::sub-page:vertical { background: trans
 }
 #ClearButton:disabled { color: #CDB9BA; border-color: #E5D5D6; }
 
+/* Detalle del pedido a pantalla completa */
+#CartDetailDialog { background: #FAF6F5; }
+#CartDetailDialog QLabel { background: transparent; }
+#CartDetailTitle {
+    font-family: "Playfair Display"; font-size: 22px; font-weight: bold;
+    color: #C21A1F;
+}
+#CartDetailSub { color: #6B6B6B; font-size: 13px; }
+#CartDetailScroll { background: transparent; }
+#CartDetailScroll > QWidget > QWidget { background: transparent; }
+#CartDetailRow {
+    background: #FFFFFF; border: 1px solid #E8C9CB; border-radius: 12px;
+}
+#CartDetailName { font-size: 16px; font-weight: bold; color: #2B2B2B; }
+#CartDetailAddons { color: #555555; font-size: 13px; }
+#CartDetailNote { color: #B26A00; font-size: 13px; font-weight: bold; }
+#CartDetailUnit { color: #8A8A8A; font-size: 12px; }
+#CartDetailQty { font-size: 18px; font-weight: bold; color: #2B2B2B; }
+#CartDetailSubtotal { font-size: 17px; font-weight: bold; color: #C21A1F; }
+#CartDetailTotalLabel { font-size: 15px; color: #6B6B6B; }
+#CartDetailTotal { font-size: 26px; font-weight: bold; color: #C21A1F; }
+#CartDetailEmpty { color: #6B6B6B; font-size: 15px; padding: 24px; }
+
 /* Ticket */
 #TicketTitle { font-family: "Playfair Display"; font-size: 24px; font-weight: bold; color: #C21A1F; padding: 6px; }
 #TicketNumber { font-size: 48px; font-weight: bold; color: #C21A1F; }
@@ -135,8 +159,12 @@ QScrollBar::add-page:vertical, QScrollBar::sub-page:vertical { background: trans
 #AddonCheck:disabled { color: #9A9A9A; }
 #AddonCheck::indicator:disabled { border-color: #CCCCCC; background: #F0EDEB; }
 #AddonTotal { font-size: 18px; font-weight: bold; color: #C21A1F; padding: 2px 0; }
-#AddonsScroll { background: transparent; border: none; }
-#AddonsScroll > QWidget > QWidget { background: transparent; }
+#AddonsGrid { background: transparent; }
+#AddonCheckDense { font-size: 12px; padding: 6px 2px; spacing: 8px; }
+#AddonCheckDense::indicator { width: 22px; height: 22px; border: 2px solid #C21A1F; border-radius: 6px; background: #FFFFFF; }
+#AddonCheckDense::indicator:checked { background: #C21A1F; }
+#AddonCheckDense:disabled { color: #9A9A9A; }
+#AddonCheckDense::indicator:disabled { border-color: #CCCCCC; background: #F0EDEB; }
 
 /* Observaciones del producto (opcional) */
 #NoteButton {

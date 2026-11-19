@@ -8,8 +8,6 @@ import os
 import sys
 import tempfile
 
-from PySide6.QtCore import QEvent, QPointF, Qt
-from PySide6.QtGui import QMouseEvent
 from PySide6.QtWidgets import QApplication
 
 import config
@@ -89,29 +87,30 @@ def main():
     todo_agotado.close()
     print("aviso de todo agotado OK")
 
-    # ---- 3b) deslizar la lista no marca adiciones sin querer ----
-    bar = dialog.scroll.verticalScrollBar()
-    bar.setValue(bar.minimum())
-    app.processEvents()
-    check = habilitada[0]
-    g = check.mapToGlobal(QPointF(check.width() / 2, check.height() / 2))
+    # ---- 3b) cuadrícula: columnas de máximo 5 filas ----
+    assert (dialog.columns, dialog.rows_per_column) == (3, 4), (
+        dialog.columns, dialog.rows_per_column)
+    assert dialog.width() >= 600, dialog.width()
 
-    def ev(t, gp):
-        local = check.mapFromGlobal(gp)
-        buttons = Qt.LeftButton if t in (QEvent.MouseButtonPress, QEvent.MouseMove) else Qt.NoButton
-        button = Qt.LeftButton if t != QEvent.MouseMove else Qt.NoButton
-        return QMouseEvent(t, QPointF(local), QPointF(gp), button, buttons, Qt.NoModifier)
+    def grid_demo(n):
+        adds = [
+            Addon(id=200 + i, name=f"Adición {i}", price=1000, stock=1,
+                  category_ids=(20,))
+            for i in range(n)
+        ]
+        dlg = ad.AddonsDialog(PIZZA, adds, {a.id: 1 for a in adds})
+        return dlg, adds
 
-    app.sendEvent(check, ev(QEvent.MouseButtonPress, g))
-    for step in (1, 2, 3):
-        app.sendEvent(check, ev(QEvent.MouseMove, QPointF(g.x(), g.y() - 40 * step)))
-        app.processEvents()
-    app.sendEvent(check, ev(QEvent.MouseButtonRelease, QPointF(g.x(), g.y() - 120)))
-    app.processEvents()
-    print("arrastre en adiciones -> scroll:", bar.value(), "| marcada:", check.isChecked())
-    assert bar.value() > 0, bar.value()
-    assert not check.isChecked()
-    assert dialog.selected_addons() == ()
+    for n, want_cols, want_rows in ((10, 2, 5), (15, 3, 5), (11, 3, 4), (20, 4, 5)):
+        dlg, _adds = grid_demo(n)
+        assert (dlg.columns, dlg.rows_per_column) == (want_cols, want_rows), (
+            n, dlg.columns, dlg.rows_per_column)
+        # La columna 2 empieza arriba: llenado por columnas, no por filas.
+        assert dlg.grid.itemAtPosition(0, 1).widget() is dlg._rows[want_rows][0]
+        assert dlg.grid.itemAtPosition(want_rows - 1, 0).widget() is dlg._rows[want_rows - 1][0]
+        assert dlg.sizeHint().height() <= 480, (n, dlg.sizeHint().height())
+        dlg.close()
+    print("cuadrícula de adiciones OK")
 
     shot = os.path.join(tempfile.gettempdir(), "preview_addons.png")
     dialog.grab().save(shot)

@@ -1,29 +1,28 @@
-from PySide6.QtCore import Qt, Signal
+from PySide6.QtCore import Qt, QTimer, Signal
 from PySide6.QtWidgets import (
     QFrame, QHBoxLayout, QLabel, QPushButton, QScrollArea, QVBoxLayout, QWidget,
 )
 
 from core.cart import Cart
 from ui.common.widgets import format_price
-from PySide6.QtCore import Qt, QTimer, Signal
-
-
 
 
 class CartPanel(QFrame):
     confirm_requested = Signal()
+    detail_requested = Signal()
 
     def __init__(self, cart: Cart):
         super().__init__()
         self.cart = cart
         self.setObjectName("CartPanel")
         self.setFixedWidth(240)
-        title = QLabel("TU SELECCIÓN")               
-        self.clear_btn = QPushButton("Vaciar pedido")
 
-        title = QLabel("Tu pedido")
-        title.setObjectName("CartTitle")
-        title.setAlignment(Qt.AlignCenter)
+        self.title_btn = QPushButton("Tu pedido  ›")
+        self.title_btn.setObjectName("CartTitleButton")
+        self.title_btn.setMinimumHeight(36)
+        self.title_btn.setCursor(Qt.PointingHandCursor)
+        self.title_btn.setToolTip("Ver el pedido completo")
+        self.title_btn.clicked.connect(self.detail_requested.emit)
 
         self.list_host = QWidget()
         self.list_layout = QVBoxLayout(self.list_host)
@@ -54,7 +53,7 @@ class CartPanel(QFrame):
         self.clear_btn.clicked.connect(self._clear)
 
         layout = QVBoxLayout(self)
-        layout.addWidget(title)
+        layout.addWidget(self.title_btn)
         layout.addWidget(scroll, 1)
         layout.addWidget(self.total_label)
         layout.addWidget(self.note_label)

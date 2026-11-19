@@ -15,6 +15,7 @@ from services.order_service import create_order
 from services.printer_service import print_ticket
 from services.ticket_renderer import render_ticket
 from ui.cliente.addons_dialog import AddonsDialog
+from ui.cliente.cart_detail_dialog import CartDetailDialog
 from ui.cliente.cart_panel import CartPanel
 from ui.cliente.ticket_dialog import TicketDialog
 from ui.cliente.tickets_dialog import TicketsDialog
@@ -162,6 +163,7 @@ class ClientWindow(QMainWindow):
         # Carrito (derecha)
         self.cart_panel = CartPanel(self.cart)
         self.cart_panel.confirm_requested.connect(self._confirm_order)
+        self.cart_panel.detail_requested.connect(self._open_cart_detail)
         body.addWidget(self.cart_panel)
 
     # --- carga de datos ---
@@ -254,6 +256,17 @@ class ClientWindow(QMainWindow):
             return
         self.cart.add(product, addons, note)
         self.cart_panel.refresh()
+
+    def _open_cart_detail(self):
+        """Ventana a pantalla completa con todo el pedido y su X para cerrar."""
+        dialog = CartDetailDialog(self.cart, self)
+        dialog.changed.connect(self.cart_panel.refresh)
+        self._modal_open = True
+        try:
+            dialog.run_fullscreen()
+        finally:
+            self._modal_open = False
+            self.cart_panel.refresh()
 
     def _confirm_order(self):
         # Copia de lo que se está pidiendo, para armar el ticket después

@@ -58,8 +58,8 @@ CAPTURAS (descomenta cuando guardes las imágenes en docs/img/)
 |---|---|
 | Menú por **categorías con íconos** | Stock por **ingredientes** (unidad, gramos o mililitros) |
 | Productos con **foto** (descargadas y guardadas en caché local) | Stock **directo** para productos como gaseosas |
-| Carrito con botones **＋ / －** y total en vivo | El menú se **refresca solo cada 15 s** con el stock real |
-| **Adiciones** con casillas, solo las que corresponden a la categoría del producto (las agotadas se ven marcadas *Agotado*) | El carrito **no deja pedir más de lo que hay** y muestra *Agotado* |
+| Carrito con botones **＋ / －** y total en vivo; toca **“Tu pedido”** para verlo a pantalla completa | El menú se **refresca solo cada 15 s** con el stock real |
+| **Adiciones** en columnas de hasta 5 filas (10 → 2×5, 15 → 3×5), solo las de la categoría; las agotadas se ven marcadas *Agotado* | El carrito **no deja pedir más de lo que hay** y muestra *Agotado* |
 | **Observaciones opcionales** por producto, escritas con el teclado táctil de la app | La observación separa las líneas del carrito y **sale impresa en el ticket** |
 | **Ticket** con número del día y vista previa | Precios y stock **validados en el servidor**, nunca en la pantalla |
 | **Tickets del día**: reimprimir o cancelar desde la pantalla | Cancelar **devuelve el stock** y borra el pedido de hoy |
@@ -313,7 +313,7 @@ Kiosko/
 │   └── printer_service.py   ← arma e imprime el ticket
 ├── ui/
 │   ├── common/              ← estilos (QSS), widgets y assets reutilizables
-│   └── cliente/             ← ventana principal, carrito, adiciones, ticket y tickets del día
+│   └── cliente/             ← ventana principal, carrito, detalle del pedido, adiciones y tickets
 ├── assets/                  ← íconos y fuentes
 ├── cache/                   ← fotos descargadas (no se sube a Git)
 └── tickets/                 ← tickets generados en modo `file` (no se sube a Git)
@@ -397,6 +397,7 @@ Faltan archivos en `assets/icons/` o `assets/fonts/`. Los productos sin foto mue
 - [x] Ticket con número diario, vista previa e impresión a archivo o consola
 - [x] **Tickets del día** en el kiosco: reimprimir y cancelar con devolución de stock
 - [x] **Observaciones opcionales** por producto con teclado táctil, impresas en el ticket
+- [x] **Detalle del pedido a pantalla completa**, con cantidades y su X para volver
 - [x] Panel de administración web (repositorio aparte)
 - [ ] Impresión en **impresora térmica ESC/POS** desde la Pi
 - [ ] **Modo kiosco**: pantalla completa y reinicio del pedido por inactividad
